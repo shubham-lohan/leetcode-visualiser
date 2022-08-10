@@ -11,7 +11,8 @@
     <title>Leetcode Visualizer</title>
     <style>
         h1,
-        h2 {
+        h2,
+        a {
             color: white;
             text-align: center;
 
@@ -22,6 +23,16 @@
             margin-left: auto;
             margin-right: auto;
         }
+
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: rgb(34, 34, 34);
+            color: white;
+            text-align: center;
+        }
     </style>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
@@ -30,14 +41,14 @@
     <h1>Leetcode Visualizer</h1>
     <form action="" method="POST" style="text-align: center;">
         {% csrf_token %}
-        <label for=" username" style="color: white;">Enter Leetcode User Name </label><br><br>
+        <label for=" username" style="color: white; font-size: larger;">Enter Leetcode User Name </label><br><br>
         <input id="username" type="text" name="username">
         <br><br>
         <input type="submit" value="submit">
     </form>
     {% if user.username %}
     <br><br>
-    <img src="{{user.img}}" alt="leetcode profile" width="50" height="50" style="border-radius: 50%;" class="center">
+    <img src="{{user.img}}" alt="leetcode profile" width="80" height="80" style="border-radius: 50%;" class="center">
     <a href="http://leetcode.com/{{user.username}}" target="_blank">
         <h1>{{user.realname}}- ({{user.username}})</h1>
     </a>
@@ -47,6 +58,10 @@
     {{plot}}
     {% endautoescape %}
     {% endfor %}
+    <br><br>
+    <div class="footer">
+        <p>Developed by: <a href="https://github.com/shubham-lohan" target="_blank">Shubham Lohan</a></p>
+    </div>
 </body>
 
 </html>
