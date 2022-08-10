@@ -11,7 +11,7 @@ def get_query(operationName):
     query = {
         "getUserProfile": """
             query getUserProfile($username: String!) {
-                # allQuestionsCount {difficulty    count}
+                allQuestionsCount {difficulty    count}
                 matchedUser(username: $username){
                     # contributions {points      questionCount      testcaseCount}
                     # profile {reputation      ranking}
@@ -65,15 +65,37 @@ def get_result(username, operationName, query):
 def get_accepted_problems_count(username):
     plot_data = "<h1>Problems Count</h1>"
     data = get_result(username, operationName='getUserProfile', query=get_query('getUserProfile'))
-    print(data['matchedUser']['submitStats'])
-    data = data['matchedUser']['submitStats']['acSubmissionNum']
-    accepted_problem_count = pd.DataFrame(data[1:])
+    d1 = data['allQuestionsCount'][1:]
+
+    difficulty = ['Easy', 'Medium', 'Hard']
+    total_ques_count = []
+    for problem_count in d1:
+        total_ques_count.append(problem_count['count'])
+    d2 = data['matchedUser']['submitStats']['acSubmissionNum'][1:]
+    accepted_ques_count = []
+    for problem_count in d2:
+        accepted_ques_count.append(problem_count['count'])
+
+    final_data = {
+        "difficulty": difficulty,
+        "total": total_ques_count,
+        "accepted": accepted_ques_count
+    }
+
+    df_problem_count = pd.DataFrame(final_data)
+    print(df_problem_count)
     color_map = {
         'Easy': 'rgb(0 ,184 ,163)',
         'Medium': 'rgb(255 ,192 ,30)',
         'Hard': 'rgb(239 ,71 ,67)'
     }
-    fig = px.pie(accepted_problem_count, values='count', names='difficulty', color='difficulty', color_discrete_map=color_map)
+    fig = px.pie(df_problem_count,
+                 values='accepted',
+                 names='difficulty',
+                 color='difficulty',
+                 color_discrete_map=color_map,
+                 labels={'difficulty': "Problem Type"}
+                 )
     fig.update_layout(
         plot_bgcolor='rgb(26,26,26)',
         paper_bgcolor='rgb(10,10,10)',
@@ -84,7 +106,8 @@ def get_accepted_problems_count(username):
         xaxis_title=None
     )
     fig.update_traces(
-        textinfo='label+percent',
+        textinfo='label+value+percent',
+        texttemplate='%{value} %{label}<br>(%{percent})'
     )
     fig.update_yaxes(automargin=True)
     fig.update_xaxes(automargin=True)
