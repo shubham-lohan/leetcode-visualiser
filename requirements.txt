@@ -39,7 +39,6 @@ pyparsing==3.0.9
 pyrsistent==0.18.1
 python-dateutil==2.8.2
 pytz==2022.1
-pywin32==304
 pyzmq==23.2.0
 requests==2.28.1
 six==1.16.0
