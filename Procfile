@@ -1,0 +1,1 @@
+web: gunicorn leetcode_visualizer.wsgi --log-file -
