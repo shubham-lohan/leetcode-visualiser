@@ -41,22 +41,13 @@ def get_accepted_problems_count(username):
     data = get_result(username, operationName='getUserProfile', query=query)
     data = data['matchedUser']['submitStats']['acSubmissionNum']
     accepted_problem_count = pd.DataFrame(data[1:])
-    # fig = accepted_problem_count.plot(y='count', x='difficulty', kind='bar', color='difficulty')
-    # fig.update_layout(
-    #     plot_bgcolor='rgb(26,26,26)',
-    #     paper_bgcolor='rgb(10,10,10)',
-    #     legend_font_color='white',
-    #     font_color='whitesmoke',
-    #     xaxis=dict(showgrid=False),
-    #     yaxis=dict(showgrid=False)
-    # )
-    fig2 = px.pie(accepted_problem_count, values='count', names='difficulty', color='difficulty', color_discrete_map={
+    color_map = {
         'Easy': 'rgb(0 ,184 ,163)',
         'Medium': 'rgb(255 ,192 ,30)',
         'Hard': 'rgb(239 ,71 ,67)'
-    },
-    )
-    fig2.update_layout(
+    }
+    fig = px.bar(accepted_problem_count, x='count', y='difficulty', orientation='h', color='difficulty', color_discrete_map=color_map)
+    fig.update_layout(
         plot_bgcolor='rgb(26,26,26)',
         paper_bgcolor='rgb(10,10,10)',
         legend_font_color='white',
@@ -64,7 +55,22 @@ def get_accepted_problems_count(username):
         xaxis=dict(showgrid=False),
         yaxis=dict(showgrid=False)
     )
-    # plot_data += plot(fig, output_type='div', include_plotlyjs=False)
+    fig2 = px.pie(accepted_problem_count, values='count', names='difficulty', color='difficulty', color_discrete_map=color_map)
+    fig2.update_layout(
+        plot_bgcolor='rgb(26,26,26)',
+        paper_bgcolor='rgb(10,10,10)',
+        legend_font_color='white',
+        font_color='whitesmoke',
+        xaxis=dict(showgrid=False),
+        yaxis=dict(showgrid=False),
+        xaxis_title=None
+    )
+    fig2.update_traces(
+        textinfo='label+percent',
+    )
+    fig2.update_yaxes(automargin=True)
+    fig2.update_xaxes(automargin=True)
+    plot_data += plot(fig, output_type='div', include_plotlyjs=False)
     plot_data += plot(fig2, output_type='div', include_plotlyjs=False)
     return plot_data
 
@@ -104,7 +110,8 @@ def get_skills_stats(username):
             legend_font_color='white',
             font_color='whitesmoke',
             xaxis=dict(showgrid=False),
-            yaxis=dict(showgrid=False)
+            yaxis=dict(showgrid=False),
+            xaxis_title=None
         )
         plot_data += f"<h2>{problem_types[i]}</h2>"
         plot_data += plot(fig, output_type='div', include_plotlyjs=False)
@@ -138,14 +145,11 @@ def index(request):
     context = {}
     if request.method == 'POST':
         username = request.POST['username']
+        status = requests.get(url=f'https://leetcode.com/{username}').status_code
+        if status != 200:
+            return render(request, "index.html", context={"plots": ['<h1 style="color: yellow;"> User does not exists']})
         accepted_problem_count = get_accepted_problems_count(username)
         advanced_problem_count = get_skills_stats(username)
         user_details = get_profile_details(username)
-        # context = {
-        #     'accepted_problem_count': accepted_problem_count,
-        #     'advanced_problem_count': advanced_problem_count
-
-        # }
-        # print(user_details)
         context = {"plots": [accepted_problem_count, advanced_problem_count], "user": user_details}
     return render(request, "index.html", context=context)
