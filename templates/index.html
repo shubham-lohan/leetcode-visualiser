@@ -3,10 +3,11 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Visualize Leetcode Stats">
+    <link rel="icon" href={% static 'images/logo.png' %} type="image/icon type">
     <title>Leetcode Visualizer</title>
     <style>
         h1,
@@ -15,7 +16,14 @@
             text-align: center;
 
         }
+
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
 <body style="background-color: black;">
@@ -28,11 +36,11 @@
         <input type="submit" value="submit">
     </form>
     {% if user.username %}
-
+    <br><br>
+    <img src="{{user.img}}" alt="leetcode profile" width="50" height="50" style="border-radius: 50%;" class="center">
     <a href="http://leetcode.com/{{user.username}}" target="_blank">
         <h1>{{user.realname}}- ({{user.username}})</h1>
     </a>
-    <!-- <img src="{{user.img}}" alt="leetcode profile" width="128" height="128" style="border-radius: 50%;"> -->
     {% endif %}
     {% for plot in plots %}
     {% autoescape off %}
