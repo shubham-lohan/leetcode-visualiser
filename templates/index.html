@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <title>Leetcode Visualizer</title>
+    <style>
+        h1,
+        h2 {
+            color: white;
+            text-align: center;
+
+        }
+    </style>
+</head>
+
+<body style="background-color: black;">
+    <h1>Leetcode Visualizer</h1>
+    <form action="" method="POST" style="text-align: center;">
+        {% csrf_token %}
+        <label for=" username" style="color: white;">Enter Leetcode User Name </label><br><br>
+        <input id="username" type="text" name="username">
+        <br><br>
+        <input type="submit" value="submit">
+    </form>
+    {% if user.username %}
+
+    <a href="http://leetcode.com/{{user.username}}" target="_blank">
+        <h1>{{user.realname}}- ({{user.username}})</h1>
+    </a>
+    <!-- <img src="{{user.img}}" alt="leetcode profile" width="128" height="128" style="border-radius: 50%;"> -->
+    {% endif %}
+    {% for plot in plots %}
+    {% autoescape off %}
+    {{plot}}
+    {% endautoescape %}
+    {% endfor %}
+</body>
+
+</html>
