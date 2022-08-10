@@ -1,9 +1,9 @@
-from http.client import HTTPResponse
 import requests
 from django.shortcuts import render
 from plotly.offline import plot
 import pandas as pd
 import plotly.express as px
+from django.http import HttpResponse
 pd.options.plotting.backend = "plotly"
 
 
@@ -146,7 +146,7 @@ def index(request):
         username = request.POST['username']
         status = requests.get(url=f'https://leetcode.com/{username}').status_code
         if status != 200:
-            return render(request, "index.html", context={"plots": ['<h1 style="color: yellow;"> User does not exists']})
+            return render(request, "index.html", context={"plots": ['<h1 style="color: yellow;"> User does not exist!']})
         accepted_problem_count = get_accepted_problems_count(username)
         advanced_problem_count = get_skills_stats(username)
         user_details = get_profile_details(username)
