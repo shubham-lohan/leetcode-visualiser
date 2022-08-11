@@ -198,6 +198,8 @@ def get_contest_ranking(username):
         legend_title="Attended Contest"
     )
     plot_data = "<h1>Attended Contests History</h1>"
+    plot_data += f"<p>Total attended contests: {len(attended_contest)}</p>"
+    plot_data += f"<p>Best Rank: {min(attended_contest['ranking'])}<br>Worst Rank: {max(attended_contest['ranking'])}</p>"
     plot_data += plot(fig, output_type='div', include_plotlyjs=False)
     return plot_data
 
