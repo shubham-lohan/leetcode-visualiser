@@ -38,8 +38,33 @@ def get_query(operationName):
                     }
                 }
             }
-        }"""
-
+        }""",
+        "getContestRankingData": """ query getContestRankingData($username: String!) {
+            userContestRanking(username: $username) {
+                attendedContestsCount
+                rating
+                globalRanking
+            }
+            userContestRankingHistory(username: $username) {
+                contest {
+                title
+                }
+                rating
+                ranking
+            }
+            }
+        """,
+        "userProfile": """ query userProfile($username: String!) {
+            matchedUser(username: $username) {
+                username
+                profile {
+                    ranking
+                    userAvatar
+                    realName
+                }
+            }
+    }
+    """
     }
     return query[operationName]
 
@@ -83,7 +108,6 @@ def get_accepted_problems_count(username):
     }
 
     df_problem_count = pd.DataFrame(final_data)
-    print(df_problem_count)
     color_map = {
         'Easy': 'rgb(0 ,184 ,163)',
         'Medium': 'rgb(255 ,192 ,30)',
@@ -94,7 +118,7 @@ def get_accepted_problems_count(username):
                  names='difficulty',
                  color='difficulty',
                  color_discrete_map=color_map,
-                 labels={'difficulty': "Problem Type"}
+                 labels={'difficulty': "Difficulty"}
                  )
     fig.update_layout(
         plot_bgcolor='rgb(26,26,26)',
@@ -103,7 +127,7 @@ def get_accepted_problems_count(username):
         font_color='whitesmoke',
         xaxis=dict(showgrid=False),
         yaxis=dict(showgrid=False),
-        xaxis_title=None
+        legend_title="Difficulty"
     )
     fig.update_traces(
         textinfo='label+value+percent',
@@ -134,6 +158,7 @@ def get_skills_stats(username):
             xaxis=dict(showgrid=False),
             yaxis=dict(showgrid=False),
             xaxis_title=None,
+            legend_title=problem_types[i].split()[-1]
         )
         plot_data += f"<h2>{problem_types[i]}</h2>"
         plot_data += plot(fig, output_type='div', include_plotlyjs=False)
@@ -141,19 +166,7 @@ def get_skills_stats(username):
 
 
 def get_profile_details(username):
-    query = """
-    query userProfile($username: String!) {
-      matchedUser(username: $username) {
-        username
-        profile {
-          ranking
-          userAvatar
-          realName
-        }
-      }
-    }
-    """
-    data = get_result(username, operationName='userProfile', query=query)
+    data = get_result(username, operationName='userProfile', query=get_query("userProfile"))
     data = data['matchedUser']
     user_details = {
         "username": data['username'],
@@ -161,6 +174,32 @@ def get_profile_details(username):
         'img': data['profile']['userAvatar']
     }
     return user_details
+
+
+def get_contest_ranking(username):
+    data = get_result(username, "getContestRankingData", get_query("getContestRankingData"))
+    user_contest_ranking = data['userContestRanking']
+    all_contest_history = pd.DataFrame(data['userContestRankingHistory'])
+    attended_contest = all_contest_history[all_contest_history['ranking'] != 0]
+    # attended_contest['contest'] = attended_contest['contest'].apply(lambda x: x['title'])
+    attended_contest.reset_index(drop=True, inplace=True)
+    for i in range(len(attended_contest)):
+        attended_contest.iloc[i, 0] = attended_contest.iloc[i, 0]['title']
+    fig = px.bar(attended_contest, x='ranking', y='contest', color='contest', text='ranking', orientation='h')
+    fig.update_layout(
+        plot_bgcolor='rgb(26,26,26)',
+        paper_bgcolor='rgb(10,10,10)',
+        legend_font_color='white',
+        font_color='whitesmoke',
+        xaxis=dict(showgrid=False),
+        yaxis=dict(showgrid=False),
+        yaxis_title="Contests",
+        xaxis_title="Rank",
+        legend_title="Attended Contest"
+    )
+    plot_data = "<h1>Attended Contests History</h1>"
+    plot_data += plot(fig, output_type='div', include_plotlyjs=False)
+    return plot_data
 
 
 def index(request):
@@ -173,5 +212,6 @@ def index(request):
         accepted_problem_count = get_accepted_problems_count(username)
         advanced_problem_count = get_skills_stats(username)
         user_details = get_profile_details(username)
-        context = {"plots": [accepted_problem_count, advanced_problem_count], "user": user_details}
+        attended_contest_history = get_contest_ranking(username)
+        context = {"plots": [accepted_problem_count, attended_contest_history, advanced_problem_count], "user": user_details}
     return render(request, "index.html", context=context)
