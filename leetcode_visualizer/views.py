@@ -215,7 +215,7 @@ def get_contest_ranking(username):
     attended_contest.reset_index(drop=True, inplace=True)
     for i in range(len(attended_contest)):
         attended_contest.iloc[i, -1] = attended_contest.iloc[i, -1]['title']
-    fig = px.bar(attended_contest, x='ranking', y='contest', color='contest', text='ranking', orientation='h', hover_data=["problemsSolved"])
+    fig = px.bar(attended_contest, y='ranking', x='contest', color='contest', text='ranking', hover_data=["problemsSolved"])
     fig.update_layout(
         plot_bgcolor='rgb(26,26,26)',
         paper_bgcolor='rgb(10,10,10)',
@@ -223,8 +223,8 @@ def get_contest_ranking(username):
         font_color='whitesmoke',
         xaxis=dict(showgrid=False),
         yaxis=dict(showgrid=False),
-        yaxis_title="Contests",
-        xaxis_title="Rank",
+        xaxis_title="Contests",
+        yaxis_title="Rank",
         legend_title="Attended Contest",
     )
     plot_data = "<h1>Attended Contests History</h1>"
