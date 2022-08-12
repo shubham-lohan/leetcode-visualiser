@@ -176,7 +176,11 @@ def get_skills_stats(username):
         problem_count = pd.DataFrame(category_count)
         problem_count.sort_values(by=['problemsSolved'], inplace=True, ascending=False)
         problem_count.reset_index(drop=True)
-        fig = px.bar(problem_count, y='problemsSolved', x='tagName', color='tagName')
+        fig = px.bar(problem_count,
+                     y='problemsSolved',
+                     x='tagName', color='tagName',
+                     labels={'tagName': problem_types[i].split()[-1]}
+                     )
         fig.update_layout(
             plot_bgcolor='rgb(26,26,26)',
             paper_bgcolor='rgb(10,10,10)',
