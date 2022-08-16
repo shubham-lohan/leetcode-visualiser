@@ -118,12 +118,14 @@ def get_accepted_problems_count(username):
     plot_data = "<h1>Problems Count</h1>"
     data = get_result(username, operationName='getUserProfile', query=get_query('getUserProfile'))
     d1 = data['allQuestionsCount'][1:]
-
+    d2 = data['matchedUser']['submitStats']['acSubmissionNum'][1:]
+    if data['matchedUser']['submitStats']['acSubmissionNum'][0]['count'] == 0:  # all count of the no of ques solved by the user
+        plot_data += "No problem is solved"
+        return plot_data
     difficulty = ['Easy', 'Medium', 'Hard']
     total_ques_count = []
     for problem_count in d1:
         total_ques_count.append(problem_count['count'])
-    d2 = data['matchedUser']['submitStats']['acSubmissionNum'][1:]
     accepted_ques_count = []
     for problem_count in d2:
         accepted_ques_count.append(problem_count['count'])
@@ -172,7 +174,11 @@ def get_skills_stats(username):
     plot_data = "<h1>Problems Solved</h1>"
     problem_types = ['Advanced Algorithms', 'Intermediate Algorithms', 'Fundamental Data-Structure']
     for i, problem_type in enumerate(data):
+        plot_data += f"<h2>{problem_types[i]}</h2>"
         category_count = data[problem_type]
+        if len(category_count) == 0:
+            plot_data += "No Data Available"
+            continue
         problem_count = pd.DataFrame(category_count)
         problem_count.sort_values(by=['problemsSolved'], inplace=True, ascending=False)
         problem_count.reset_index(drop=True)
@@ -191,7 +197,6 @@ def get_skills_stats(username):
             xaxis_title=None,
             legend_title=problem_types[i].split()[-1]
         )
-        plot_data += f"<h2>{problem_types[i]}</h2>"
         plot_data += plot(fig, output_type='div', include_plotlyjs=False)
     return plot_data
 
