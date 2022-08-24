@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views
+from . import views, compare
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", views.index, name="index"),
-    path("<str:username>", views.visualize, name="index"),
+    path("compare_profiles", compare.compare_profiles, name="compare_profiles"),
+    path("<str:username>", views.visualize, name="visualize"),
 ]

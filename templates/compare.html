@@ -38,22 +38,24 @@
     <h1><a href="/">Leetcode Visualizer</a></h1>
     {% if show_input %}
 
-    <h3><a href={% url 'compare_profiles' %}>Compare Leetcode Profile</a></h3>
     <form action="" method="POST" style="text-align: center;">
         {% csrf_token %}
         <label for=" username" style="color: white; font-size: larger;">Enter Leetcode User Name </label><br><br>
-        <input id="username" type="text" name="username">
+        <input id="username1" type="text" name="username1" placeholder="username 1">
+        <input id="username2" type="text" name="username2" placeholder="username 2">
         <br><br>
         <input type="submit" value="submit">
     </form>
     {% endif %}
-    {% if user.username %}
-    <br><br>
-    <img src="{{user.img}}" alt="leetcode profile" width="80" height="80" style="border-radius: 50%;" class="center">
-    <a href="http://leetcode.com/{{user.username}}" target="_blank">
-        <h1>{{user.realname}}- ({{user.username}})</h1>
-    </a>
-    {% endif %}
+    {% for user in users %}
+    <div style="display: inline-block;text-align: center;">
+        <img src="{{user.img}}" alt="leetcode profile" width="80" height="80" style="border-radius: 50%;"
+            class="center">
+        <a href="http://leetcode.com/{{user.username}}" target="_blank">
+            <h1>{{user.realname}}- ({{user.username}})</h1>
+        </a>
+    </div>
+    {% endfor %}
     {% for plot in plots %}
     {% autoescape off %}
     {{plot}}
