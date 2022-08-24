@@ -244,7 +244,7 @@ def visualize(request, username):
     context = {'show_input': False}
     status = requests.get(url=f'https://leetcode.com/{username}').status_code
     if status != 200:
-        return render(request, "index.html", context={"plots": ['<h1 style="color: yellow;"> User does not exist!']})
+        return render(request, "index.html", context={"plots": ['<h1 style="color: yellow;"> User does not exist!'], 'show_input': True})
     accepted_problem_count = get_accepted_problems_count(username)
     advanced_problem_count = get_skills_stats(username)
     user_details = get_profile_details(username)

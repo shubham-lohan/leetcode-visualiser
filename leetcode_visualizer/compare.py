@@ -119,6 +119,11 @@ def compare_profiles(request):
     if request.method == 'POST':
         username1 = request.POST['username1']
         username2 = request.POST['username2']
+        status1 = requests.get(url=f'https://leetcode.com/{username1}').status_code
+        status2 = requests.get(url=f'https://leetcode.com/{username2}').status_code
+        print(status1, status2)
+        if status1 != 200 or status2 != 200:
+            return render(request, "compare.html", context={"plots": ['<h1 style="color: yellow;"> User does not exist!'], 'show_input': True})
         user1_details = get_profile_details(username1)
         user2_details = get_profile_details(username2)
         users = [user1_details, user2_details]
