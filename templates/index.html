@@ -1,75 +1,12 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Visualize Leetcode Stats">
-    <link rel="icon" href={% static 'images/logo.png' %} type="image/icon type">
-    <title>Leetcode Visualizer</title>
-    <style>
-        a {
-            color: whitesmoke;
-        }
-
-        .center {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            background-color: rgb(34, 34, 34);
-        }
-    </style>
-    <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.58.5/plotly.min.js"></script> -->
-    <script src="{% static 'js/plotly.js' %}"></script>
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6VENFFMV7W"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-6VENFFMV7W');
-    </script>
-</head>
-
-<body style="background-color: black; color: whitesmoke; text-align: center;overflow-x: hidden;">
-    <h1><a href="/">Leetcode Visualizer</a></h1>
-    <h3><a href={% url 'compare_profiles' %}>Compare Leetcode Profile</a></h3>
-    <form action="" method="POST" style="text-align: center;">
-        {% csrf_token %}
-        <label for=" username" style="color: white; font-size: larger;">Enter Leetcode User Name </label><br><br>
-        <input id="username" type="text" name="username">
-        <br><br>
-        <input type="submit" value="submit">
-    </form>
-    {% if user.username %}
+{% block content %}
+<form action="" method="POST" style="text-align: center;">
+    {% csrf_token %}
+    <label for=" username" style="color: white; font-size: larger;">Enter Leetcode User Name </label><br><br>
+    <input id="username" type="text" name="username">
     <br><br>
-    <img src="{{user.img}}" alt="leetcode profile" width="80" height="80" style="border-radius: 50%;" class="center">
-    <a href="http://leetcode.com/{{user.username}}" target="_blank">
-        <h1>{{user.realname}}- ({{user.username}})</h1>
-    </a>
-    {% endif %}
-    {% for plot in plots %}
-    {% autoescape off %}
-    {{plot}}
-    {% endautoescape %}
-    {% endfor %}
-    <br><br>
-    <div class="footer">
-        <a class="github-button" href="https://github.com/shubham-lohan/leetcode-visualizer" data-icon="octicon-github"
-            data-size="smaller">Shubham Lohan</a>
-    </div>
-</body>
-
-</html>
+    <input type="submit" value="submit">
+</form>
+{% endblock content %}

@@ -248,7 +248,7 @@ def visualize(request, username):
     advanced_problem_count = get_skills_stats(username)
     user_details = get_profile_details(username)
     attended_contest_history = get_contest_ranking(username)
-    context = {"plots": [accepted_problem_count, attended_contest_history, advanced_problem_count], "user": user_details}
+    context = {"plots": [accepted_problem_count, attended_contest_history, advanced_problem_count], "users": [user_details]}
     return render(request, "index.html", context=context)
 
 

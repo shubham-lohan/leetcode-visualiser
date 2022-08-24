@@ -111,6 +111,7 @@ def compare_skill_stats(username1, username2):
             xaxis=dict(showgrid=False),
             yaxis=dict(showgrid=False),
             xaxis_title=None,
+            yaxis_title='problems solved',
         )
         fig.update_yaxes(automargin=True)
         fig.update_xaxes(automargin=True)
