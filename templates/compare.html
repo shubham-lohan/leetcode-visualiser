@@ -36,8 +36,6 @@
 
 <body style="background-color: black; color: whitesmoke; text-align: center;overflow-x: hidden;">
     <h1><a href="/">Leetcode Visualizer</a></h1>
-    {% if show_input %}
-
     <form action="" method="POST" style="text-align: center;">
         {% csrf_token %}
         <label for=" username" style="color: white; font-size: larger;">Enter Leetcode User Name </label><br><br>
@@ -46,7 +44,6 @@
         <br><br>
         <input type="submit" value="submit">
     </form>
-    {% endif %}
     {% for user in users %}
     <div style="display: inline-block;text-align: center;">
         <img src="{{user.img}}" alt="leetcode profile" width="80" height="80" style="border-radius: 50%;"

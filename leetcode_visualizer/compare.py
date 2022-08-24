@@ -32,7 +32,7 @@ def plot_problem_count(username1, username2):
     d1 = solved_problem_count(username1)
     d2 = solved_problem_count(username2)
     if len(d1) == 0 or len(d2) == 0:
-        return "<br>Kindly enter valid usernames"
+        return ""
     label = d1['difficulty']
     fig.add_trace(go.Pie(
         values=d1['accepted'],
@@ -40,6 +40,7 @@ def plot_problem_count(username1, username2):
         sort=False,
         name=username1,
         title=username1,
+        textposition='inside'
     ),
         row=1, col=1
     )
@@ -49,6 +50,7 @@ def plot_problem_count(username1, username2):
         sort=False,
         name=username2,
         title=username2,
+        textposition='inside'
     ),
         row=1, col=2)
     fig.update_traces(marker=dict(colors=['rgb(0 ,184 ,163)', 'rgb(255 ,192 ,30)', 'rgb(239 ,71 ,67)']))
@@ -85,8 +87,9 @@ def compare_skill_stats(username1, username2):
         data2 = d2[problem_type]
         data1 = pd.DataFrame(data1)
         data2 = pd.DataFrame(data2)
-        data1.sort_values(by=['problemsSolved'], inplace=True, ascending=False)
-        data1.reset_index(drop=True)
+        if len(data1):
+            data1.sort_values(by=['problemsSolved'], inplace=True, ascending=False)
+            data1.reset_index(drop=True)
         fig = go.Figure()
         fig.add_traces(go.Bar(
             x=data1.get('tagName'),
@@ -121,13 +124,15 @@ def compare_profiles(request):
         username2 = request.POST['username2']
         status1 = requests.get(url=f'https://leetcode.com/{username1}').status_code
         status2 = requests.get(url=f'https://leetcode.com/{username2}').status_code
-        print(status1, status2)
         if status1 != 200 or status2 != 200:
-            return render(request, "compare.html", context={"plots": ['<h1 style="color: yellow;"> User does not exist!'], 'show_input': True})
+            a = username1 if status1 != 200 else ""
+            b = username2 if status2 != 200 else ""
+            return render(request, "compare.html", context={"plots": [f'<h1 style="color: yellow;"> {a} {b} does not exist!']})
         user1_details = get_profile_details(username1)
         user2_details = get_profile_details(username2)
         users = [user1_details, user2_details]
+        problem_type_count = plot_problem_count(username1, username2)
         topicwise_problem_count = compare_skill_stats(username1, username2)
-        plots = [plot_problem_count(username1, username2), topicwise_problem_count]
+        plots = [problem_type_count, topicwise_problem_count]
         return render(request, "compare.html", context={"users": users, "plots": plots})
-    return render(request, "compare.html", context={'show_input': True})
+    return render(request, "compare.html")
