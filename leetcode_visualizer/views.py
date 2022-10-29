@@ -185,7 +185,8 @@ def get_skills_stats(username):
         fig = px.bar(problem_count,
                      y='problemsSolved',
                      x='tagName', color='tagName',
-                     labels={'tagName': problem_types[i].split()[-1]}
+                     labels={'tagName': problem_types[i].split()[-1]},
+                     text='problemsSolved'
                      )
         fig.update_layout(
             plot_bgcolor='rgb(26,26,26)',
