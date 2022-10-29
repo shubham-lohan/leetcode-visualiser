@@ -74,6 +74,56 @@ def plot_problem_count(username1, username2):
     return plot_data
 
 
+def get_attending_contest(username):
+    data = get_result(username, "userContestRankingInfo", get_query("userContestRankingInfo"))
+    all_contest_history = pd.DataFrame(data['userContestRankingHistory'])
+    attended_contest = all_contest_history[all_contest_history['attended'] != False]
+    attended_contest.reset_index(drop=True, inplace=True)
+    for i in range(len(attended_contest)):
+        attended_contest.iloc[i, -1] = attended_contest.iloc[i, -1]['title']
+    return attended_contest[['ranking', 'contest']]
+
+
+def compare_contest_ranking(username1, username2):
+    d1 = get_attending_contest(username1)
+    d2 = get_attending_contest(username2)
+    print(d1, d2)
+    plot_data = "<h1>Common Contest Ranking</h1>"
+    common_contest = pd.merge(d1, d2, on=['contest'], how='inner')
+    if len(common_contest) == 0:
+        return ""
+    fig = go.Figure()
+    fig.add_traces(go.Bar(
+        x=common_contest.get('contest'),
+        y=common_contest.get('ranking_x'),
+        name=username1,
+        text=common_contest.get('ranking_x')
+    )
+    )
+    fig.add_traces(go.Bar(
+        x=common_contest.get('contest'),
+        y=common_contest.get('ranking_y'),
+        name=username2,
+        text=common_contest.get('ranking_y')
+    )
+    )
+    fig.update_layout(
+        plot_bgcolor='rgb(26,26,26)',
+        paper_bgcolor='rgb(10,10,10)',
+        legend_font_color='white',
+        font_color='whitesmoke',
+        xaxis=dict(showgrid=False),
+        yaxis=dict(showgrid=False),
+        xaxis_title=None,
+        yaxis_title='ranking'
+    )
+    fig.update_yaxes(automargin=True)
+    fig.update_xaxes(automargin=True)
+    fig.update_traces(texttemplate='%{text}', textposition='inside')
+    plot_data += plot(fig, output_type='div', include_plotlyjs=False)
+    return plot_data
+
+
 def compare_skill_stats(username1, username2):
     d1 = get_result(username1, operationName='skillStats', query=get_query('skillStats'))
     d1 = d1['matchedUser']['tagProblemCounts']
@@ -94,12 +144,14 @@ def compare_skill_stats(username1, username2):
         fig.add_traces(go.Bar(
             x=data1.get('tagName'),
             y=data1.get('problemsSolved'),
+            text=data1.get('problemsSolved'),
             name=username1
         )
         )
         fig.add_traces(go.Bar(
             x=data2.get('tagName'),
             y=data2.get('problemsSolved'),
+            text=data2.get('problemsSolved'),
             name=username2,
         )
         )
@@ -115,6 +167,7 @@ def compare_skill_stats(username1, username2):
         )
         fig.update_yaxes(automargin=True)
         fig.update_xaxes(automargin=True)
+        fig.update_traces(texttemplate='%{text}', textposition='inside')
         plot_data += plot(fig, output_type='div', include_plotlyjs=False)
     return plot_data
 
@@ -134,6 +187,7 @@ def compare_profiles(request):
         users = [user1_details, user2_details]
         problem_type_count = plot_problem_count(username1, username2)
         topicwise_problem_count = compare_skill_stats(username1, username2)
-        plots = [problem_type_count, topicwise_problem_count]
+        common_contests = compare_contest_ranking(username1, username2)
+        plots = [problem_type_count, topicwise_problem_count, common_contests]
         return render(request, "compare.html", context={"users": users, "plots": plots})
     return render(request, "compare.html")
