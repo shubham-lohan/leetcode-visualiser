@@ -242,6 +242,9 @@ def get_contest_ranking(username):
 
 
 def visualize(request, username):
+    if request.method == 'POST':
+        username = request.POST['username']
+        return redirect(visualize, username)
     status = requests.get(url=f'https://leetcode.com/{username}').status_code
     if status != 200:
         return render(request, "index.html", context={"plots": ['<h1 style="color: yellow;"> User does not exist!']})
