@@ -90,8 +90,36 @@ def get_query(operationName):
             startTime
             }
         }
+        }""",
+        "userPublicProfile": """
+        query userPublicProfile($username: String!) {
+            matchedUser(username: $username) {
+                username
+                githubUrl
+                twitterUrl
+                linkedinUrl
+                profile {
+                ranking
+                userAvatar
+                realName
+                aboutMe
+                school
+                websites
+                countryName
+                company
+                jobTitle
+                skillTags
+                postViewCount
+                postViewCountDiff
+                reputation
+                reputationDiff
+                solutionCount
+                solutionCountDiff
+                categoryDiscussCount
+                categoryDiscussCountDiff
+                }
+            }
         }"""
-
     }
     return query[operationName]
 
@@ -240,13 +268,15 @@ def get_contest_ranking(username):
         plot_data += plot(fig, output_type='div', include_plotlyjs=False)
     return plot_data
 
-
 def visualize(request, username):
     if request.method == 'POST':
         username = request.POST['username']
         return redirect(visualize, username)
-    status = requests.get(url=f'https://leetcode.com/{username}').status_code
-    if status != 200:
+
+    userPublicProfile = get_result(
+        username, "userPublicProfile", get_query("userPublicProfile"))
+
+    if userPublicProfile['matchedUser'] is None:
         return render(request, "index.html", context={"plots": ['<h1 style="color: yellow;"> User does not exist!']})
     accepted_problem_count = get_accepted_problems_count(username)
     advanced_problem_count = get_skills_stats(username)

@@ -87,7 +87,6 @@ def get_attending_contest(username):
 def compare_contest_ranking(username1, username2):
     d1 = get_attending_contest(username1)
     d2 = get_attending_contest(username2)
-    print(d1, d2)
     plot_data = "<h1>Common Contest Ranking</h1>"
     common_contest = pd.merge(d1, d2, on=['contest'], how='inner')
     if len(common_contest) == 0:
@@ -176,11 +175,13 @@ def compare_profiles(request):
     if request.method == 'POST':
         username1 = request.POST['username1']
         username2 = request.POST['username2']
-        status1 = requests.get(url=f'https://leetcode.com/{username1}').status_code
-        status2 = requests.get(url=f'https://leetcode.com/{username2}').status_code
-        if status1 != 200 or status2 != 200:
-            a = username1 if status1 != 200 else ""
-            b = username2 if status2 != 200 else ""
+        userPublicProfile1 = get_result(
+            username1, operationName='userPublicProfile', query=get_query('userPublicProfile'))
+        userPublicProfile2 = get_result(
+            username2, operationName='userPublicProfile', query=get_query('userPublicProfile'))
+        if userPublicProfile1['matchedUser'] is None or userPublicProfile2['matchedUser'] is None:
+            a = username1 if userPublicProfile1['matchedUser'] is None else ""
+            b = username2 if userPublicProfile2['matchedUser'] is None else ""
             return render(request, "compare.html", context={"plots": [f'<h1 style="color: yellow;"> {a} {b} does not exist!']})
         user1_details = get_profile_details(username1)
         user2_details = get_profile_details(username2)
