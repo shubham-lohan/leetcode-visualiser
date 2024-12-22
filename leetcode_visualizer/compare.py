@@ -4,7 +4,7 @@ from plotly.subplots import make_subplots
 
 
 def solved_problem_count(username):
-    data = get_result(username, operationName='getUserProfile', query=get_query('getUserProfile'))
+    data = get_result(username, 'getUserProfile')
     d1 = data['allQuestionsCount'][1:]
     d2 = data['matchedUser']['submitStats']['acSubmissionNum'][1:]
     if data['matchedUser']['submitStats']['acSubmissionNum'][0]['count'] == 0:  # all count of the no of ques solved by the user
@@ -75,7 +75,7 @@ def plot_problem_count(username1, username2):
 
 
 def get_attending_contest(username):
-    data = get_result(username, "userContestRankingInfo", get_query("userContestRankingInfo"))
+    data = get_result(username, "userContestRankingInfo")
     all_contest_history = pd.DataFrame(data['userContestRankingHistory'])
     attended_contest = all_contest_history[all_contest_history['attended'] != False]
     attended_contest.reset_index(drop=True, inplace=True)
@@ -124,9 +124,9 @@ def compare_contest_ranking(username1, username2):
 
 
 def compare_skill_stats(username1, username2):
-    d1 = get_result(username1, operationName='skillStats', query=get_query('skillStats'))
+    d1 = get_result(username1, 'skillStats')
     d1 = d1['matchedUser']['tagProblemCounts']
-    d2 = get_result(username2, operationName='skillStats', query=get_query('skillStats'))
+    d2 = get_result(username2, 'skillStats')
     d2 = d2['matchedUser']['tagProblemCounts']
     problem_types = ['Advanced Algorithms', 'Intermediate Algorithms', 'Fundamental Data-Structure']
     plot_data = "<h1>Problems Solved</h1>"
@@ -175,10 +175,8 @@ def compare_profiles(request):
     if request.method == 'POST':
         username1 = request.POST['username1']
         username2 = request.POST['username2']
-        userPublicProfile1 = get_result(
-            username1, operationName='userPublicProfile', query=get_query('userPublicProfile'))
-        userPublicProfile2 = get_result(
-            username2, operationName='userPublicProfile', query=get_query('userPublicProfile'))
+        userPublicProfile1 = get_result(username1, 'userPublicProfile')
+        userPublicProfile2 = get_result(username2, 'userPublicProfile')
         if userPublicProfile1['matchedUser'] is None or userPublicProfile2['matchedUser'] is None:
             a = username1 if userPublicProfile1['matchedUser'] is None else ""
             b = username2 if userPublicProfile2['matchedUser'] is None else ""

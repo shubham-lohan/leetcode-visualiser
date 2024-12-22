@@ -1,4 +1,4 @@
-import requests
+from .utils import get_result
 from django.shortcuts import render, redirect
 from plotly.offline import plot
 import pandas as pd
@@ -6,145 +6,9 @@ import plotly.express as px
 from django.http import HttpResponse
 pd.options.plotting.backend = "plotly"
 
-
-def get_query(operationName):
-    query = {
-        "getUserProfile": """
-            query getUserProfile($username: String!) {
-                allQuestionsCount {difficulty    count}
-                matchedUser(username: $username){
-                    # contributions {points      questionCount      testcaseCount}
-                    # profile {reputation      ranking}
-                    submitStats {acSubmissionNum {difficulty        count        submissions}
-                    # totalSubmissionNum {difficulty        count        submissions}
-                    }
-                }
-            }
-        """,
-        "skillStats": """query skillStats($username: String!) {
-            matchedUser(username: $username) {
-                tagProblemCounts {
-                    advanced {
-                        tagName
-                        problemsSolved
-                    }
-                    intermediate {
-                        tagName
-                        problemsSolved
-                    }
-                    fundamental {
-                        tagName
-                        problemsSolved
-                    }
-                }
-            }
-        }""",
-        "getContestRankingData": """ query getContestRankingData($username: String!) {
-            userContestRanking(username: $username) {
-                attendedContestsCount
-                rating
-                globalRanking
-            }
-            userContestRankingHistory(username: $username) {
-                contest {
-                title
-                }
-                rating
-                ranking
-            }
-            }
-        """,
-        "userProfile": """ query userProfile($username: String!) {
-            matchedUser(username: $username) {
-                username
-                profile {
-                    ranking
-                    userAvatar
-                    realName
-                }
-                    }
-            }
-            """,
-        "userContestRankingInfo": """
-            query userContestRankingInfo($username: String!) {
-        userContestRanking(username: $username) {
-            attendedContestsCount
-            rating
-            globalRanking
-            totalParticipants
-            topPercentage
-            badge {
-            name
-            }
-        }
-        userContestRankingHistory(username: $username) {
-            attended
-            trendDirection
-            problemsSolved
-            totalProblems
-            finishTimeInSeconds
-            rating
-            ranking
-            contest {
-            title
-            startTime
-            }
-        }
-        }""",
-        "userPublicProfile": """
-        query userPublicProfile($username: String!) {
-            matchedUser(username: $username) {
-                username
-                githubUrl
-                twitterUrl
-                linkedinUrl
-                profile {
-                ranking
-                userAvatar
-                realName
-                aboutMe
-                school
-                websites
-                countryName
-                company
-                jobTitle
-                skillTags
-                postViewCount
-                postViewCountDiff
-                reputation
-                reputationDiff
-                solutionCount
-                solutionCountDiff
-                categoryDiscussCount
-                categoryDiscussCountDiff
-                }
-            }
-        }"""
-    }
-    return query[operationName]
-
-
-def get_result(username, operationName, query):
-    payload = {
-        "operationName": operationName,
-        "variables": {
-            "username": username,
-        },
-        "query": query
-    }
-    header = {
-        "Referer": f"https://leetcode.com/{username}",
-        'Content-type': 'application/json'
-
-    }
-    data = requests.post(url='https://leetcode.com/graphql', json=payload, headers=header)
-    data.raise_for_status()
-    return data.json()['data']
-
-
 def get_accepted_problems_count(username):
     plot_data = "<h1>Problems Count</h1>"
-    data = get_result(username, operationName='getUserProfile', query=get_query('getUserProfile'))
+    data = get_result(username, operation_name='getUserProfile')
     d1 = data['allQuestionsCount'][1:]
     d2 = data['matchedUser']['submitStats']['acSubmissionNum'][1:]
     if data['matchedUser']['submitStats']['acSubmissionNum'][0]['count'] == 0:  # all count of the no of ques solved by the user
@@ -197,7 +61,7 @@ def get_accepted_problems_count(username):
 
 
 def get_skills_stats(username):
-    data = get_result(username, operationName='skillStats', query=get_query('skillStats'))
+    data = get_result(username, operation_name='skillStats')
     data = data['matchedUser']['tagProblemCounts']
     plot_data = "<h1>Problems Solved</h1>"
     problem_types = ['Advanced Algorithms', 'Intermediate Algorithms', 'Fundamental Data-Structure']
@@ -231,7 +95,7 @@ def get_skills_stats(username):
 
 
 def get_profile_details(username):
-    data = get_result(username, operationName='userProfile', query=get_query("userProfile"))
+    data = get_result(username, operation_name='userProfile')
     data = data['matchedUser']
     user_details = {
         "username": data['username'],
@@ -242,7 +106,7 @@ def get_profile_details(username):
 
 
 def get_contest_ranking(username):
-    data = get_result(username, "userContestRankingInfo", get_query("userContestRankingInfo"))
+    data = get_result(username, "userContestRankingInfo")
     all_contest_history = pd.DataFrame(data['userContestRankingHistory'])
     attended_contest = all_contest_history[all_contest_history['attended'] != False]
     # attended_contest['contest'] = attended_contest['contest'].apply(lambda x: x['title'])
@@ -273,8 +137,7 @@ def visualize(request, username):
         username = request.POST['username']
         return redirect(visualize, username)
 
-    userPublicProfile = get_result(
-        username, "userPublicProfile", get_query("userPublicProfile"))
+    userPublicProfile = get_result(username, "userPublicProfile")
 
     if userPublicProfile['matchedUser'] is None:
         return render(request, "index.html", context={"plots": ['<h1 style="color: yellow;"> User does not exist!']})

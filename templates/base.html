@@ -12,6 +12,7 @@
     <style>
         a {
             color: whitesmoke;
+            text-decoration: none;
         }
 
         .center {
@@ -25,14 +26,35 @@
             left: 0;
             bottom: 0;
             width: 100%;
-            background-color: rgb(34, 34, 34);
+            background-color: transparent; /* Black background color */
+            text-align: center; /* Center the content */
+            padding: 10px 0; /* Padding for spacing */
+            font-size: 14px; /* Font size */
+        }
+
+        .nav-link {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #e74c3c;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-link:hover {
+            background-color: #c0392b;
+        }
+
+        .nav-link:active {
+            background-color: #e74c3c;
         }
     </style>
-    <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.58.5/plotly.min.js"></script> -->
     <script src="{% static 'js/plotly.js' %}"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6VENFFMV7W"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -45,9 +67,10 @@
 
 <body style="background-color: black; color: whitesmoke; text-align: center;overflow-x: hidden;">
     <h1><a href="/">Leetcode Visualizer</a></h1>
-    <h3><a href={% url 'compare_profiles' %}>Compare Leetcode Profile</a></h3>
+    {% if request.path != '/compare_profiles' %}
+    <h3><a href="{% url 'compare_profiles' %}" class="nav-link">Compare Leetcode Profile</a></h3>
+    {% endif %}
     {% block content %}
-
     {% endblock content %}
 
     {% for user in users %}
@@ -59,11 +82,15 @@
         </a>
     </div>
     {% endfor %}
-    {% for plot in plots %}
-    {% autoescape off %}
-    {{plot}}
-    {% endautoescape %}
-    {% endfor %}
+{% for plot in plots %}
+    <div class="plot-container" style="margin: 20px auto; width: 100%; max-width: 1200px;">
+        <div class="plot" style="background-color: #1e1e1e; border-radius: 10px; padding: 20px;">
+            {% autoescape off %}
+            {{ plot }}
+            {% endautoescape %}
+        </div>
+        </div>
+{% endfor %}
     <br><br>
     <div class="footer">
         <a class="github-button" href="https://github.com/shubham-lohan/leetcode-visualizer" data-icon="octicon-github"

@@ -1,12 +1,36 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block content %}
-<form action="" method="POST" style="text-align: center;">
-    {% csrf_token %}
-    <label for=" username" style="color: white; font-size: larger;">Enter Leetcode User Name </label><br><br>
-    <input id="username1" type="text" name="username1" placeholder="username 1">
-    <input id="username2" type="text" name="username2" placeholder="username 2">
-    <br><br>
-    <input type="submit" value="submit">
-</form>
+<div style="display: flex; justify-content: center; align-items: center; min-height: 60vh; background-color: black;">
+    <form action="" method="POST"
+        style="width: 100%; max-width: 600px; padding: 20px; background: #1e1e1e; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);">
+        {% csrf_token %}
+        <h2 style="text-align: center; color: #ffffff; font-family: 'Arial', sans-serif; margin-bottom: 20px;">Compare Leetcode
+            Profiles</h2>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+            <div style="width: 48%;">
+                <label for="username1"
+                    style="color: #ffffff; font-size: 14px; font-weight: bold; display: block; margin-bottom: 5px;">Enter
+                    Username 1</label>
+                <input id="username1" type="text" name="username1" placeholder="username 1"
+                    style="width: 100%; padding: 10px; border: none; border-radius: 4px; background: #2c2c2c; color: #ffffff; font-size: 14px; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);">
+            </div>
+        
+            <div style="width: 48%;">
+                <label for="username2"
+                    style="color: #ffffff; font-size: 14px; font-weight: bold; display: block; margin-bottom: 5px;">Enter
+                    Username 2</label>
+                <input id="username2" type="text" name="username2" placeholder="username 2"
+                    style="width: 100%; padding: 10px; border: none; border-radius: 4px; background: #2c2c2c; color: #ffffff; font-size: 14px; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);">
+            </div>
+        </div>
+        
+        <button type="submit"
+            style="width: 100%; padding: 10px 0; background: #e74c3c; border: none; border-radius: 4px; color: #ffffff; font-size: 16px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: background 0.3s;">
+            Submit
+        </button>
+        </form>
+</div>
 {% endblock content %}
