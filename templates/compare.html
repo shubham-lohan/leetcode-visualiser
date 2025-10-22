@@ -1,36 +1,75 @@
 {% extends "base.html" %}
 {% load static %}
-
-{% block content %}
-<div style="display: flex; justify-content: center; align-items: center; min-height: 60vh; background-color: black;">
-    <form action="" method="POST"
-        style="width: 100%; max-width: 600px; padding: 20px; background: #1e1e1e; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);">
-        {% csrf_token %}
-        <h2 style="text-align: center; color: #ffffff; font-family: 'Arial', sans-serif; margin-bottom: 20px;">Compare Leetcode
-            Profiles</h2>
-        
-        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-            <div style="width: 48%;">
-                <label for="username1"
-                    style="color: #ffffff; font-size: 14px; font-weight: bold; display: block; margin-bottom: 5px;">Enter
-                    Username 1</label>
-                <input id="username1" type="text" name="username1" placeholder="username 1"
-                    style="width: 100%; padding: 10px; border: none; border-radius: 4px; background: #2c2c2c; color: #ffffff; font-size: 14px; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);">
-            </div>
-        
-            <div style="width: 48%;">
-                <label for="username2"
-                    style="color: #ffffff; font-size: 14px; font-weight: bold; display: block; margin-bottom: 5px;">Enter
-                    Username 2</label>
-                <input id="username2" type="text" name="username2" placeholder="username 2"
-                    style="width: 100%; padding: 10px; border: none; border-radius: 4px; background: #2c2c2c; color: #ffffff; font-size: 14px; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);">
+{% block form_container_class %}
+col-md-8 col-lg-6
+{% endblock %}
+{% block card_header_icon %}<i class="fas fa-balance-scale me-2"></i>{% endblock %}
+{% block card_header_text %} Compare LeetCode Profiles {% endblock %}
+{% block card_footer_text %}
+Compare LeetCode profiles side by side to analyze
+performance differences
+{% endblock %}
+{% block compact_form_class %} col-md-8 {% endblock %}
+{% block initial_form %}
+<form action="{% url 'comparison_form' %}" method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="form-group">
+                <label for="username1" class="form-label">
+                    <i class="fas fa-user me-2"></i>First Username
+                </label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">@</span>
+                    </div>
+                    <input id="username1" type="text" name="username1" class="form-control"
+                        placeholder="e.g. leetcode_pro1" required />
+                </div>
             </div>
         </div>
-        
-        <button type="submit"
-            style="width: 100%; padding: 10px 0; background: #e74c3c; border: none; border-radius: 4px; color: #ffffff; font-size: 16px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: background 0.3s;">
-            Submit
+        <div class="col-md-6 mb-3">
+            <div class="form-group">
+                <label for="username2" class="form-label">
+                    <i class="fas fa-user me-2"></i>Second Username
+                </label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">@</span>
+                    </div>
+                    <input id="username2" type="text" name="username2" class="form-control"
+                        placeholder="e.g. leetcode_pro2" required />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+            <i class="fas fa-chart-line me-2"></i> Compare Profiles
         </button>
-        </form>
+    </div>
+</form>
+<div class="mt-4 text-center">
+    <a href="{% url 'profile_form' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i> Back to Single Profile
+    </a>
 </div>
-{% endblock content %}
+{% endblock %}
+{% block compact_search_form %}
+<form action="{% url 'comparison_form' %}" method="POST" class="d-flex align-items-center">
+    {% csrf_token %}
+    <div class="input-group">
+        <div class="input-group-text">
+            <i class="fas fa-balance-scale me-2"></i>
+        </div>
+        <input type="text" name="username1" value="{{ users.0.username }}" class="form-control"
+            placeholder="First username" required />
+        <span class="input-group-text bg-dark">vs</span>
+        <input type="text" name="username2" value="{{ users.1.username }}" class="form-control"
+            placeholder="Second username" required />
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sync me-1"></i> Compare
+        </button>
+    </div>
+</form>
+{% endblock %}

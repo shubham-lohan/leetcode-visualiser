@@ -15,10 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views, compare
+from . import views
+from . import compare
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", views.index, name="index"),
-    path("compare_profiles", compare.compare_profiles, name="compare_profiles"),
-    path("<str:username>", views.visualize, name="visualize"),
+    # Profile resources
+    path('', views.profile_form, name='index'),  # Landing page with profile form
+    path('profiles/', views.profile_form, name='profile_form'),  # Profile search form
+    path('profiles/<str:username>/', views.profile_detail, name='profile_detail'),  # Individual profile details
+    
+    # Comparison resources
+    path('compare/', compare.comparison_form, name='comparison_form'),  # Comparison form
+    path('compare/<str:username1>/<str:username2>/', compare.comparison_detail, name='comparison_detail'),  # Specific comparison
 ]
