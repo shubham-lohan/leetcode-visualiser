@@ -1,21 +1,23 @@
 {
-    "builds": [{
-        "src": "leetcode_visualizer/wsgi.py",
-        "use": "@vercel/python",
-        "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
-    }, {
-        "src": "build_files.sh",
-        "use": "@vercel/static-build",
-        "config": { "distDir": "staticfiles" }
-    }],
+    "builds": [
+        {
+            "src": "leetcode_visualizer/wsgi.py",
+            "use": "@vercel/python",
+            "config": {
+                "runtime": "python3.9",
+                "maxLambdaSize": "15mb"
+            }
+        }
+    ],
     "routes": [
         {
             "src": "/static/(.*)",
-            "dest": "/static/$1"
+            "dest": "/staticfiles/$1"
         },
         {
             "src": "/(.*)",
             "dest": "leetcode_visualizer/wsgi.py"
         }
-    ]
+    ],
+    "outputDirectory": "staticfiles"
 }
