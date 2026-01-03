@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load static %}
 {% block form_container_class %}
 col-md-8 col-lg-6
 {% endblock %}
@@ -11,8 +10,7 @@ performance differences
 {% endblock %}
 {% block compact_form_class %} col-md-8 {% endblock %}
 {% block initial_form %}
-<form action="{% url 'comparison_form' %}" method="POST">
-    {% csrf_token %}
+<form action="{{ url_for('submit_comparison') }}" method="POST">
     <div class="row">
         <div class="col-md-6 mb-3">
             <div class="form-group">
@@ -50,14 +48,13 @@ performance differences
     </div>
 </form>
 <div class="mt-4 text-center">
-    <a href="{% url 'profile_form' %}" class="btn btn-outline-secondary">
+    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left me-2"></i> Back to Single Profile
     </a>
 </div>
 {% endblock %}
 {% block compact_search_form %}
-<form action="{% url 'comparison_form' %}" method="POST" class="d-flex align-items-center">
-    {% csrf_token %}
+<form action="{{ url_for('submit_comparison') }}" method="POST" class="d-flex align-items-center">
     <div class="input-group">
         <div class="input-group-text">
             <i class="fas fa-balance-scale me-2"></i>

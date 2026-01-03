@@ -1,7 +1,7 @@
-# Leetcode Visualizer
+# Leetcode Visualiser
 
-This website fetch the public data from leetcode profile and visualize the stats of that profile
-The site is currently live at [here](https://leetcode-visualizer.herokuapp.com/)
+
+This website fetch the public data from leetcode profile and visualiser the stats of that profile
 
 ## future work:
 ~~addition of compare option for two profile~~

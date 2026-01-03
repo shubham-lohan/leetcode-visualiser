@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block initial_form %}
+<form action="{{ url_for('search_profile') }}" method="POST">
+    <div class="form-group mb-4">
+        <label for="username" class="form-label">
+            <i class="fas fa-user me-2"></i>Enter LeetCode Username
+        </label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">@</span>
+            </div>
+            <input id="username" type="text" name="username" class="form-control" placeholder="e.g. johnsmith"
+                required />
+        </div>
+    </div>
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+            <i class="fas fa-chart-bar me-2"></i> Visualize Profile
+        </button>
+    </div>
+</form>
+<div class="mt-4 text-center">
+    <a href="{{ url_for('comparison_form') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-balance-scale me-2"></i> Compare Profiles
+    </a>
+</div>
+{% endblock %} {% block compact_search_form %}
+<form action="{{ url_for('search_profile') }}" method="POST" class="d-flex align-items-center">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text">@</span>
+        </div>
+        <input type="text" name="username" value="{{ users.0.username }}" class="form-control"
+            placeholder="Search another profile..." required />
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search me-1"></i> Search
+        </button>
+    </div>
+</form>
+{% endblock %}
