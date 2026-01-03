@@ -4,7 +4,24 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LeetCode Profile Visualiser</title>
+    <title>LeetCode Profile Visualiser | Analyze & Compare LeetCode Stats</title>
+    <meta name="description" content="Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats, contest rankings, and compare profiles with friends.">
+    <meta name="keywords" content="LeetCode, Visualiser, Statistics, Coding Interview, Data Structures, Algorithms, Contest Ranking, Profile Comparison">
+    <meta name="author" content="Shubham Lohan">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://leetcode-visualiser-zeta.vercel.app/">
+    <meta property="og:title" content="LeetCode Profile Visualiser">
+    <meta property="og:description" content="Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats and compare profiles.">
+    <meta property="og:image" content="{{ url_for('static', path='img/preview.png') }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://leetcode-visualiser-zeta.vercel.app/">
+    <meta property="twitter:title" content="LeetCode Profile Visualiser">
+    <meta property="twitter:description" content="Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats and compare profiles.">
+    <meta property="twitter:image" content="{{ url_for('static', path='img/preview.png') }}">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -19,13 +36,13 @@
         rel="stylesheet" />
 
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6VENFFMV7W"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HRHBX7SPTM"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
-        gtag('config', 'G-6VENFFMV7W');
+        gtag('config', 'G-HRHBX7SPTM');
     </script>
 
     <!-- Plotly JS (required for charts) -->
