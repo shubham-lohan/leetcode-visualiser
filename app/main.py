@@ -16,7 +16,7 @@ app.include_router(compare.router)
 def robots():
     return """User-agent: *
 Allow: /
-Sitemap: https://leetcode-visualiser-zeta.vercel.app/sitemap.xml
+Sitemap: https://leetcode-visualiser.vercel.app/sitemap.xml
 """
 
 @app.get("/sitemap.xml", response_class=Response)
@@ -24,12 +24,12 @@ def sitemap():
     content = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://leetcode-visualiser-zeta.vercel.app/</loc>
+    <loc>https://leetcode-visualiser.vercel.app/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://leetcode-visualiser-zeta.vercel.app/compare</loc>
+    <loc>https://leetcode-visualiser.vercel.app/compare</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
