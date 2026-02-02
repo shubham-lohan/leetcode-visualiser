@@ -31,7 +31,7 @@ body {
 }
 
 .leetcode-card {
-  background-color: var(--leetcode-medium);
+  background-color: var(--leetcode-card-bg);
   border: none;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
@@ -138,6 +138,10 @@ body {
   width: 100% !important;
 }
 
+.js-plotly-plot {
+  width: 100% !important;
+}
+
 /* Improved text colors */
 .card-header h2,
 .card-header h4 {
@@ -202,9 +206,27 @@ p {
   color: white;
 }
 
-#loading-spinner {
-  width: 3rem;
-  height: 3rem;
+/* Loading Overlay Improved */
+#loading-overlay {
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.85); /* Darker backdrop */
+  z-index: 9999;
+  backdrop-filter: blur(5px); /* Modern blur effect */
+}
+
+.skeleton-pulse {
+    animation: skeleton-loading 1.5s infinite ease-in-out;
+}
+
+@keyframes skeleton-loading {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
 }
 
 /* Responsive adjustments */

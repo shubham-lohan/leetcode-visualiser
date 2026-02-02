@@ -1,16 +1,17 @@
 from fastapi import FastAPI
+from fastapi.responses import PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
-from app.routers import profile, compare
+
+from app.routers import compare, profile
 
 app = FastAPI(title="LeetCode Visualiser")
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-from fastapi.responses import PlainTextResponse, Response
-
 app.include_router(profile.router)
 app.include_router(compare.router)
+
 
 @app.get("/robots.txt", response_class=PlainTextResponse)
 def robots():
@@ -18,6 +19,7 @@ def robots():
 Allow: /
 Sitemap: https://leetcode-visualiser.vercel.app/sitemap.xml
 """
+
 
 @app.get("/sitemap.xml", response_class=Response)
 def sitemap():
@@ -37,6 +39,8 @@ def sitemap():
 """
     return Response(content=content, media_type="application/xml")
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

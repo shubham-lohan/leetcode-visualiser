@@ -70,3 +70,20 @@ performance differences
     </div>
 </form>
 {% endblock %}
+{% block comparison_content %}
+{% if plots %}
+<div class="container-fluid leetcode-content py-5">
+    <div class="row">
+        {% for plot in plots %}
+        <div class="col-12 mb-4">
+            <div class="card visualization-card">
+                <div class="card-body">
+                    {{ plot|safe }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
