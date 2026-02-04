@@ -8,26 +8,51 @@
     <meta name="description"
         content="Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats, contest rankings, and compare profiles with friends." />
     <meta name="keywords"
-        content="LeetCode, Visualiser, Statistics, Coding Interview, Data Structures, Algorithms, Contest Ranking, Profile Comparison" />
+        content="LeetCode, Visualiser, Visualizer, LeetCode Stats, LeetCode Profile, Coding Interview, Data Structures, Algorithms, Contest Ranking, Profile Comparison, LeetCode Analysis, LeetCode Charts" />
     <meta name="author" content="Shubham Lohan" />
+    <link rel="canonical" href="https://leetcode-visualiser.vercel.app{{ request.url.path if request.url.path != '/' else '' }}" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "LeetCode Visualiser",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats, contest rankings, and compare profiles with friends.",
+      "featureList": "Profile Visualization, Stats Comparison, Contest History Analysis, Language Breakdown",
+      "author": {
+          "@type": "Person",
+          "name": "Shubham Lohan"
+      }
+    }
+    </script>
+
 
 
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://leetcode-visualiser.vercel.app/" />
+    <meta property="og:url" content="{{ request.url }}" />
     <meta property="og:title"
-        content="{% block og_title %}{% if og_title %}{{ og_title }} | LeetCode Visualiser{% else %}LeetCode Profile Visualiser{% endif %}{% endblock %}" />
+        content="{% if og_title %}{{ og_title }} | LeetCode Visualiser{% else %}LeetCode Profile Visualiser | Analyze & Compare Stats{% endif %}" />
     <meta property="og:description"
-        content="{% block og_description %}Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats and compare profiles.{% endblock %}" />
+        content="{% if og_description %}{{ og_description }}{% else %}Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats, contest rankings, and compare profiles with friends.{% endif %}" />
     <meta property="og:image"
-        content="{% block og_image %}{{ url_for('static', path='img/preview.png') }}{% endblock %}" />
+        content="{% if og_image %}{{ og_image }}{% else %}https://leetcode-visualiser.vercel.app/static/img/preview.png{% endif %}" />
 
 
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://leetcode-visualiser.vercel.app/" />
-    <meta property="twitter:title" content="LeetCode Profile Visualiser" />
+    <meta property="twitter:url" content="{{ request.url }}" />
+    <meta property="twitter:title" 
+        content="{% if og_title %}{{ og_title }} | LeetCode Visualiser{% else %}LeetCode Profile Visualiser{% endif %}" />
     <meta property="twitter:description"
-        content="Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats and compare profiles." />
-    <meta property="twitter:image" content="{{ url_for('static', path='img/preview.png') }}" />
+        content="{% if og_description %}{{ og_description }}{% else %}Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats, contest rankings, and compare profiles with friends.{% endif %}" />
+    <meta property="twitter:image" 
+        content="{% if og_image %}{{ og_image }}{% else %}https://leetcode-visualiser.vercel.app/static/img/preview.png{% endif %}" />
 
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -152,7 +177,12 @@
                     </div>
                 </div>
             </div>
+                </div>
+            </div>
         </div>
+        
+        {% block landing_content %}{% endblock %}
+
         {% else %}
 
         <div class="container-fluid py-4" style="background-color: var(--leetcode-light)">
@@ -278,6 +308,9 @@
             </p>
             <p class="small text-muted mt-2">
                 Not affiliated with LeetCode. Created for educational purposes.
+            </p>
+            <p class="small text-muted mt-1">
+                Created by <a href="https://shubham-lohan.github.io/" target="_blank" class="text-secondary text-decoration-none">Shubham Lohan</a>
             </p>
         </div>
     </footer>

@@ -81,6 +81,9 @@ async def comparison_detail(request: Request, username1: str, username2: str):
         "plots": plots,
         "username1": username1,
         "username2": username2,
+        "og_title": f"Compare {username1} vs {username2}",
+        "og_description": f"See who's better: {username1} vs {username2}. Compare their LeetCode problem solving stats, contest ratings, and skills side-by-side.",
+        "og_image": user1_details.get("img") or user2_details.get("img"),
     }
     return templates.TemplateResponse(
         request=request, name="compare.html", context=context

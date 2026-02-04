@@ -23,7 +23,60 @@
         <i class="fas fa-balance-scale me-2"></i> Compare Profiles
     </a>
 </div>
-{% endblock %} {% block compact_search_form %}
+{% endblock %}
+
+{% block landing_content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h2 class="mb-4 display-4 fw-bold" style="color: var(--leetcode-accent)">Why Use LeetCode Visualiser?</h2>
+            <p class="lead text-muted">Unlock deeper insights into your coding journey. Our tool goes beyond basic stats to
+                provide a comprehensive analysis of your LeetCode performance.</p>
+        </div>
+    </div>
+
+    <div class="row g-4 text-center mb-5">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm" style="background-color: var(--leetcode-medium);">
+                <div class="card-body p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="fas fa-chart-pie fa-3x"></i>
+                    </div>
+                    <h3 class="h4 text-white">Advanced Charts</h3>
+                    <p class="text-white-50">Visualize your problem-solving patterns with interactive pie charts, heatmaps,
+                        and submission trends. Understand your strengths and weaknesses at a glance.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm" style="background-color: var(--leetcode-medium);">
+                <div class="card-body p-4">
+                    <div class="mb-3 text-info">
+                        <i class="fas fa-users fa-3x"></i>
+                    </div>
+                    <h3 class="h4 text-white">Side-by-Side Comparison</h3>
+                    <p class="text-white-50">Compare your LeetCode profile with friends or top competitive programmers. See
+                        who has solved more hard problems or has a better contest rating.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm" style="background-color: var(--leetcode-medium);">
+                <div class="card-body p-4">
+                    <div class="mb-3 text-success">
+                        <i class="fas fa-trophy fa-3x"></i>
+                    </div>
+                    <h3 class="h4 text-white">Contest Analytics</h3>
+                    <p class="text-white-50">Track your contest performance history. Analyze your rating trajectory, best
+                        ranks, and consistency over time in Weekly and Biweekly contests.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block compact_search_form %}
 <form action="{{ url_for('search_profile') }}" method="POST" class="d-flex align-items-center">
     <div class="input-group">
         <div class="input-group-prepend">
