@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8" />
@@ -10,7 +10,8 @@
     <meta name="keywords"
         content="LeetCode, Visualiser, Visualizer, LeetCode Stats, LeetCode Profile, Coding Interview, Data Structures, Algorithms, Contest Ranking, Profile Comparison, LeetCode Analysis, LeetCode Charts" />
     <meta name="author" content="Shubham Lohan" />
-    <link rel="canonical" href="https://leetcode-visualiser.vercel.app{{ request.url.path if request.url.path != '/' else '' }}" />
+    <link rel="canonical"
+        href="https://leetcode-visualiser.vercel.app{{ request.url.path if request.url.path != '/' else '' }}" />
 
     <script type="application/ld+json">
     {
@@ -19,319 +20,152 @@
       "name": "LeetCode Visualiser",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "description": "Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats, contest rankings, and compare profiles with friends.",
-      "featureList": "Profile Visualization, Stats Comparison, Contest History Analysis, Language Breakdown",
-      "author": {
-          "@type": "Person",
-          "name": "Shubham Lohan"
-      }
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "description": "Visualise your LeetCode progress with beautiful charts.",
+      "author": { "@type": "Person", "name": "Shubham Lohan" }
     }
     </script>
-
-
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ request.url }}" />
     <meta property="og:title"
-        content="{% if og_title %}{{ og_title }} | LeetCode Visualiser{% else %}LeetCode Profile Visualiser | Analyze & Compare Stats{% endif %}" />
+        content="{% if og_title %}{{ og_title }} | LeetCode Visualiser{% else %}LeetCode Profile Visualiser{% endif %}" />
     <meta property="og:description"
-        content="{% if og_description %}{{ og_description }}{% else %}Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats, contest rankings, and compare profiles with friends.{% endif %}" />
+        content="{% if og_description %}{{ og_description }}{% else %}Visualise your LeetCode progress with beautiful charts.{% endif %}" />
     <meta property="og:image"
         content="{% if og_image %}{{ og_image }}{% else %}https://leetcode-visualiser.vercel.app/static/img/preview.png{% endif %}" />
 
-
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="{{ request.url }}" />
-    <meta property="twitter:title" 
+    <meta property="twitter:title"
         content="{% if og_title %}{{ og_title }} | LeetCode Visualiser{% else %}LeetCode Profile Visualiser{% endif %}" />
     <meta property="twitter:description"
-        content="{% if og_description %}{{ og_description }}{% else %}Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats, contest rankings, and compare profiles with friends.{% endif %}" />
-    <meta property="twitter:image" 
+        content="{% if og_description %}{{ og_description }}{% else %}Visualise your LeetCode progress with beautiful charts.{% endif %}" />
+    <meta property="twitter:image"
         content="{% if og_image %}{{ og_image }}{% else %}https://leetcode-visualiser.vercel.app/static/img/preview.png{% endif %}" />
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0"></script>
 
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
-
-
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HRHBX7SPTM"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-
         gtag('config', 'G-HRHBX7SPTM');
     </script>
 
-
-    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-
+    <!-- Theme initialization (prevent flash) -->
+    <script>
+        (function () {
+            const saved = localStorage.getItem('lv-theme');
+            if (saved) document.documentElement.setAttribute('data-theme', saved);
+        })();
+    </script>
 
     <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}" />
-
-
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='img/favicon.svg') }}" />
 
     {% block extra_head %}{% endblock %}
 </head>
 
 <body>
-
+    <!-- Loading Overlay -->
     <div id="loading-overlay">
-        <div class="text-center text-white">
-            <div class="spinner-border text-warning" style="width: 3rem; height: 3rem" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <h3 class="mt-3">Analyzing Profile...</h3>
-            <p class="text-white-50">Please wait while we fetch the latest stats</p>
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Analyzing Profile...</p>
         </div>
     </div>
 
-
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0a1929">
+    <!-- Navbar -->
+    <nav class="navbar">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-                <i class="fas fa-code fa-lg me-2"></i>
-                <span class="fw-bold">LeetCode Visualiser</span>
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                <span>LeetCode Visualiser</span>
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            {% if users %}
+            <div class="navbar-search">
+                {% block compact_search_form %}{% endblock %}
+            </div>
+            {% endif %}
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">
-                            <i class="fas fa-user me-1"></i> Single Profile
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('comparison_form') }}">
-                            <i class="fas fa-balance-scale me-1"></i> Compare Profiles
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://github.com/shubham-lohan/leetcode-visualizer" target="_blank">
-                            <i class="fab fa-github me-1"></i> GitHub
-                        </a>
-                    </li>
-                </ul>
+            <div class="navbar-actions">
+                <a href="{{ url_for('comparison_form') }}" class="btn btn-ghost">
+                    <i class="fas fa-code-compare"></i>
+                    <span class="hide-mobile">Compare</span>
+                </a>
+                <button class="btn-icon theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                </button>
             </div>
         </div>
     </nav>
 
-
+    <!-- Main Content -->
     <main>
         {% if error %}
-        <div class="container-fluid py-3">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        {{ error|safe }}
-                        <div class="text-center mt-3">
-                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-home me-2"></i> Back to Home
-                            </a>
-                        </div>
-                    </div>
-                </div>
+        <div class="container">
+            {{ error|safe }}
+            <div class="text-center mt">
+                <a href="{{ url_for('index') }}" class="btn btn-ghost">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
             </div>
         </div>
-        {% elif not users %}
-
-        <div class="container-fluid leetcode-bg">
-            <div class="row min-vh-100 d-flex justify-content-center align-items-center">
-                <div class="{% block form_container_class %}col-md-6 col-lg-4{% endblock %}">
-
-                    <div class="card leetcode-card">
-                        <div class="card-header text-center">
-                            <h2 class="mb-0">
-                                {% block card_header_icon %}<i class="fas fa-code me-2"></i>{%
-                                endblock %} {% block card_header_text %}LeetCode Profile
-                                Visualiser{% endblock %}
-                            </h2>
-                        </div>
-                        <div class="card-body">
-                            {% block initial_form %}{% endblock %}
-                        </div>
-                        <div class="card-footer text-center">
-                            <small class="text-muted">
-                                {% block card_footer_text %}Visualize your LeetCode progress
-                                with beautiful charts{% endblock %}
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-                </div>
-            </div>
-        </div>
-        
-        {% block landing_content %}{% endblock %}
-
         {% else %}
-
-        <div class="container-fluid py-4" style="background-color: var(--leetcode-light)">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="{% block compact_form_class %}col-md-6{% endblock %}">
-                        {% block compact_search_form %}{% endblock %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="container-fluid leetcode-content py-5">
-
-            <div class="row justify-content-center mb-5">
-                {% for user in users %}
-                <div class="col-md-4 col-lg-3 mb-4">
-                    <div class="card user-card h-100">
-                        <div class="card-header bg-dark text-white text-center">
-                            <h4 class="mb-0">{{ user.username }}</h4>
-                        </div>
-                        <div class="card-body text-center">
-                            <img src="{{ user.img }}" alt="{{ user.username }}"
-                                class="rounded-circle img-thumbnail mb-3"
-                                style="width: 120px; height: 120px; object-fit: cover" />
-                            <h5 class="card-title">{{ user.realname }}</h5>
-                            <a href="https://leetcode.com/{{ user.username }}" target="_blank"
-                                class="btn btn-sm btn-outline-secondary mt-2">
-                                View LeetCode Profile
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-
-
-            <div class="row">
-
-
-
-                {% if problems_chart or languages_chart %}
-                <div class="col-12 mb-4">
-                    <div class="card visualization-card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    {% if problems_chart %}
-                                    {{ problems_chart|safe }}
-                                    {% else %}
-                                    <div class="text-center py-5">
-                                        <h4 class="text-muted">No problems solved</h4>
-                                    </div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-6">
-                                    {% if languages_chart %}
-                                    {{ languages_chart|safe }}
-                                    {% else %}
-                                    <div class="text-center py-5">
-                                        <h4 class="text-muted">No language data</h4>
-                                    </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-
-
-                {% if contest_history %}
-                <div class="col-12 mb-4">
-                    <div class="card visualization-card">
-                        <div class="card-body">
-                            <div
-                                class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-3">
-                                <h2 class="mb-0">Attended Contests History</h2>
-                                <div class="d-flex flex-wrap gap-2">
-                                    <span class="badge border border-secondary text-secondary bg-transparent p-2 text-wrap text-start">Total
-                                        Attended: {{ contest_history.total }}</span>
-                                    <span class="badge border border-success text-success bg-transparent p-2 text-wrap text-start">Best Rank: {{
-                                        contest_history.best }}</span>
-                                    <span class="badge border border-danger text-danger bg-transparent p-2 text-wrap text-start">Worst Rank: {{
-                                        contest_history.worst }}</span>
-                                </div>
-                            </div>
-                            {{ contest_history.chart|safe }}
-                            {% if contest_history.message %}
-                            <p class="text-muted mt-3">{{ contest_history.message }}</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if skills_stats %}
-                <div class="col-12 mb-4">
-                    <div class="card visualization-card">
-                        <div class="card-body">
-                            <h1 class="mb-4">Problems Solved</h1>
-                            {% for chart_item in skills_stats %}
-                            {{ chart_item.chart|safe }}
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-        </div>
+            {% block content %}{% endblock %}
         {% endif %}
-        
-        {% block comparison_content %}{% endblock %}
     </main>
 
-
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container text-center">
-            <p class="mb-0">
-                <i class="fas fa-code me-1"></i> LeetCode Profile Visualiser
-                &copy;<span id="currentYear"></span>
-            </p>
-            <p class="small text-muted mt-2">
-                Not affiliated with LeetCode. Created for educational purposes.
-            </p>
-            <p class="small text-muted mt-1">
-                Created by <a href="https://shubham-lohan.github.io/" target="_blank" class="text-secondary text-decoration-none">Shubham Lohan</a>
-            </p>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>LeetCode Visualiser &copy; <span id="currentYear"></span> &middot;
+                Created by <a href="https://shubham-lohan.github.io/" target="_blank">Shubham Lohan</a></p>
+            <p style="margin-top:4px">Not affiliated with LeetCode. Created for educational purposes.</p>
         </div>
     </footer>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-        document.getElementById("currentYear").textContent =
-            new Date().getFullYear();
+        // Year
+        document.getElementById("currentYear").textContent = new Date().getFullYear();
 
-
+        // Loading overlay on form submit
         document.addEventListener("DOMContentLoaded", function () {
-            const forms = document.querySelectorAll("form");
-            forms.forEach((form) => {
+            document.querySelectorAll("form").forEach(function (form) {
                 form.addEventListener("submit", function () {
                     document.getElementById("loading-overlay").style.display = "block";
                 });
             });
         });
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('lv-theme', next);
+            // Re-render charts if they exist
+            if (typeof reRenderCharts === 'function') reRenderCharts();
+        }
     </script>
+
+    <script src="{{ url_for('static', path='js/dashboard.js') }}"></script>
+
+    {% block extra_scripts %}{% endblock %}
 </body>
 
 </html>

@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -7,7 +9,7 @@ from app.services.helpers.comparison import (
     compare_problem_counts_from_data,
     compare_skills_from_data,
 )
-from app.services.helpers.profile import get_profile_details_from_data
+from app.services.helpers.profile import get_profile_details_from_data, get_stat_cards_from_data
 from app.services.leetcode import LeetCodeDataService
 
 router = APIRouter(prefix="/compare")
@@ -32,9 +34,6 @@ async def submit_comparison(
 async def comparison_detail(request: Request, username1: str, username2: str):
     """Display detailed comparison between two specific LeetCode profiles"""
 
-    # Validation logic
-    # We validate sequentially here, or could do parallel if we improve validate_user to take list
-    # For now, let's keep it simple as per original
     validation1 = await LeetCodeDataService.validate_user(username1)
     validation2 = await LeetCodeDataService.validate_user(username2)
 
@@ -45,7 +44,7 @@ async def comparison_detail(request: Request, username1: str, username2: str):
         if not validation2["valid"]:
             error_messages.append(validation2["message"])
 
-        error_html = '<div class="alert alert-warning" role="alert"><i class="fas fa-exclamation-triangle me-2"></i>'
+        error_html = '<div class="alert-error"><i class="fas fa-exclamation-triangle"></i> '
         error_html += "<br>".join(error_messages)
         error_html += "</div>"
 
@@ -63,8 +62,12 @@ async def comparison_detail(request: Request, username1: str, username2: str):
     user2_details = get_profile_details_from_data(user2_data)
     users = [user1_details, user2_details]
 
-    # Generate comparison visualizations
-    problem_type_count = compare_problem_counts_from_data(
+    # Get stat cards for both users
+    stat_cards1 = get_stat_cards_from_data(user1_data)
+    stat_cards2 = get_stat_cards_from_data(user2_data)
+
+    # Generate comparison chart data
+    problem_comparison = compare_problem_counts_from_data(
         user1_data, user2_data, username1, username2
     )
     skills_comparison = compare_skills_from_data(
@@ -74,11 +77,16 @@ async def comparison_detail(request: Request, username1: str, username2: str):
         user1_data, user2_data, username1, username2
     )
 
-    plots = [problem_type_count, skills_comparison, contest_comparison]
+    chart_data = {
+        "problems": problem_comparison,
+        "skills": skills_comparison,
+        "contest": contest_comparison,
+    }
 
     context = {
         "users": users,
-        "plots": plots,
+        "stat_cards": [stat_cards1, stat_cards2],
+        "chart_data_json": json.dumps(chart_data),
         "username1": username1,
         "username2": username2,
         "og_title": f"Compare {username1} vs {username2}",

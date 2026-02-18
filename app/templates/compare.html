@@ -1,89 +1,128 @@
 {% extends "base.html" %}
-{% block form_container_class %}
-col-md-8 col-lg-6
-{% endblock %}
-{% block card_header_icon %}<i class="fas fa-balance-scale me-2"></i>{% endblock %}
-{% block card_header_text %} Compare LeetCode Profiles {% endblock %}
-{% block card_footer_text %}
-Compare LeetCode profiles side by side to analyze
-performance differences
-{% endblock %}
-{% block compact_form_class %} col-md-8 {% endblock %}
-{% block initial_form %}
-<form action="{{ url_for('submit_comparison') }}" method="POST">
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <div class="form-group">
-                <label for="username1" class="form-label">
-                    <i class="fas fa-user me-2"></i>First Username
-                </label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">@</span>
-                    </div>
-                    <input id="username1" type="text" name="username1" class="form-control"
-                        placeholder="e.g. leetcode_pro1" required />
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 mb-3">
-            <div class="form-group">
-                <label for="username2" class="form-label">
-                    <i class="fas fa-user me-2"></i>Second Username
-                </label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">@</span>
-                    </div>
-                    <input id="username2" type="text" name="username2" class="form-control"
-                        placeholder="e.g. leetcode_pro2" required />
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="d-grid gap-2">
-        <button type="submit" class="btn btn-primary btn-lg btn-block">
-            <i class="fas fa-chart-line me-2"></i> Compare Profiles
-        </button>
-    </div>
-</form>
-<div class="mt-4 text-center">
-    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
-        <i class="fas fa-arrow-left me-2"></i> Back to Single Profile
-    </a>
-</div>
-{% endblock %}
+
 {% block compact_search_form %}
-<form action="{{ url_for('submit_comparison') }}" method="POST" class="d-flex align-items-center">
-    <div class="input-group">
-        <div class="input-group-text">
-            <i class="fas fa-balance-scale me-2"></i>
-        </div>
-        <input type="text" name="username1" value="{{ users.0.username }}" class="form-control"
-            placeholder="First username" required />
-        <span class="input-group-text bg-dark">vs</span>
-        <input type="text" name="username2" value="{{ users.1.username }}" class="form-control"
-            placeholder="Second username" required />
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-sync me-1"></i> Compare
-        </button>
-    </div>
+<form action="{{ url_for('submit_comparison') }}" method="POST" style="display:flex;gap:8px;align-items:center;">
+    <input type="text" name="username1" value="{{ users.0.username if users else '' }}" placeholder="Username 1"
+        required style="height:36px;padding:0 12px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-xs);color:var(--text-primary);font-size:0.8125rem;font-family:inherit;outline:none;flex:1;" />
+    <span class="compare-vs">vs</span>
+    <input type="text" name="username2" value="{{ users.1.username if users and users|length > 1 else '' }}"
+        placeholder="Username 2" required
+        style="height:36px;padding:0 12px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-xs);color:var(--text-primary);font-size:0.8125rem;font-family:inherit;outline:none;flex:1;" />
+    <button type="submit" class="btn btn-primary" style="height:36px;padding:0 14px;">
+        <i class="fas fa-sync"></i>
+    </button>
 </form>
 {% endblock %}
-{% block comparison_content %}
-{% if plots %}
-<div class="container-fluid leetcode-content py-5">
-    <div class="row">
-        {% for plot in plots %}
-        <div class="col-12 mb-4">
-            <div class="card visualization-card">
-                <div class="card-body">
-                    {{ plot|safe }}
+
+{% block content %}
+{% if not users %}
+<!-- ============ COMPARE LANDING ============ -->
+<section class="hero">
+    <h1 class="hero-title">Compare LeetCode Profiles</h1>
+    <p class="hero-subtitle">
+        Enter two LeetCode usernames to compare problem-solving stats, contest rankings, and skills side-by-side.
+    </p>
+
+    <form action="{{ url_for('submit_comparison') }}" method="POST" style="width:100%;max-width:560px;">
+        <div class="compare-inputs">
+            <input type="text" name="username1" placeholder="Username 1" required />
+            <span class="compare-vs">vs</span>
+            <input type="text" name="username2" placeholder="Username 2" required />
+        </div>
+        <div class="text-center" style="margin-top:16px;">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-chart-line"></i> Compare Profiles
+            </button>
+        </div>
+    </form>
+
+    <div class="hero-actions">
+        <a href="{{ url_for('index') }}" class="btn btn-ghost">
+            <i class="fas fa-arrow-left"></i> Single Profile
+        </a>
+    </div>
+</section>
+
+{% else %}
+<!-- ============ COMPARISON DASHBOARD ============ -->
+<div class="container dashboard">
+
+    <!-- Profile Cards Side by Side -->
+    <div class="compare-profiles">
+        {% for user in users %}
+        <div class="card" style="padding:20px;">
+            <div class="profile-header" style="padding:0;">
+                <img src="{{ user.img }}" alt="{{ user.username }}" class="profile-avatar"
+                    style="width:56px;height:56px;" />
+                <div class="profile-info">
+                    <h2 class="profile-name" style="font-size:1.125rem;">{{ user.realname or user.username }}</h2>
+                    <span class="profile-username">@{{ user.username }}</span>
                 </div>
             </div>
+
+            {% if stat_cards and stat_cards|length > loop.index0 %}
+            {% set sc = stat_cards[loop.index0] %}
+            <div class="grid grid-cols-2" style="gap:8px;margin-top:16px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span
+                        style="font-size:1.125rem;font-weight:700;color:var(--text-primary);">{{ sc.total_solved }}</span>
+                    <span style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;">Solved</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span
+                        style="font-size:1.125rem;font-weight:700;color:var(--text-primary);">{{ sc.contest_rating }}</span>
+                    <span style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;">Rating</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span
+                        style="font-size:1.125rem;font-weight:700;color:var(--text-primary);">{{ sc.global_ranking }}</span>
+                    <span style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;">Rank</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span
+                        style="font-size:1.125rem;font-weight:700;color:var(--text-primary);">{{ sc.acceptance_rate }}%</span>
+                    <span
+                        style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;">Acceptance</span>
+                </div>
+            </div>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
+
+    <!-- Comparison Charts -->
+    <p class="section-title">Comparison Charts</p>
+
+    <div class="grid grid-cols-1 mb">
+        <!-- Problem Comparison -->
+        <div class="card chart-card">
+            <p class="chart-title">Problem Count Comparison</p>
+            <div class="chart-wrapper" id="chart-compare-problems">
+                <div class="empty-state"><p>No data</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills Comparison Charts -->
+    <div class="grid grid-cols-1 mb" id="compare-skills-container">
+        <!-- Rendered by JS -->
+    </div>
+
+    <!-- Contest Comparison -->
+    <div class="grid grid-cols-1 mb">
+        <div class="card chart-card">
+            <p class="chart-title">Contest Rating Comparison</p>
+            <div class="chart-wrapper" id="chart-compare-contest" style="max-height:360px;">
+                <div class="empty-state"><p>No data</p></div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Chart Data -->
+<script>
+    window.__CHART_DATA__ = {{ chart_data_json|safe }};
+    window.__COMPARE_MODE__ = true;
+</script>
 {% endif %}
 {% endblock %}

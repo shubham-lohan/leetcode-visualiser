@@ -1,92 +1,185 @@
-{% extends "base.html" %} {% block initial_form %}
-<form action="{{ url_for('search_profile') }}" method="POST">
-    <div class="form-group mb-4">
-        <label for="username" class="form-label">
-            <i class="fas fa-user me-2"></i>Enter LeetCode Username
-        </label>
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text">@</span>
-            </div>
-            <input id="username" type="text" name="username" class="form-control" placeholder="e.g. johnsmith"
-                required />
-        </div>
-    </div>
-    <div class="d-grid gap-2">
-        <button type="submit" class="btn btn-primary btn-lg btn-block">
-            <i class="fas fa-chart-bar me-2"></i> Visualize Profile
-        </button>
-    </div>
-</form>
-<div class="mt-4 text-center">
-    <a href="{{ url_for('comparison_form') }}" class="btn btn-outline-secondary">
-        <i class="fas fa-balance-scale me-2"></i> Compare Profiles
-    </a>
-</div>
-{% endblock %}
-
-{% block landing_content %}
-<div class="container py-5">
-    <div class="row mb-5">
-        <div class="col-lg-8 mx-auto text-center">
-            <h2 class="mb-4 display-4 fw-bold" style="color: var(--leetcode-accent)">Why Use LeetCode Visualiser?</h2>
-            <p class="lead text-muted">Unlock deeper insights into your coding journey. Our tool goes beyond basic stats to
-                provide a comprehensive analysis of your LeetCode performance.</p>
-        </div>
-    </div>
-
-    <div class="row g-4 text-center mb-5">
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="background-color: var(--leetcode-medium);">
-                <div class="card-body p-4">
-                    <div class="mb-3 text-warning">
-                        <i class="fas fa-chart-pie fa-3x"></i>
-                    </div>
-                    <h3 class="h4 text-white">Advanced Charts</h3>
-                    <p class="text-white-50">Visualize your problem-solving patterns with interactive pie charts, heatmaps,
-                        and submission trends. Understand your strengths and weaknesses at a glance.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="background-color: var(--leetcode-medium);">
-                <div class="card-body p-4">
-                    <div class="mb-3 text-info">
-                        <i class="fas fa-users fa-3x"></i>
-                    </div>
-                    <h3 class="h4 text-white">Side-by-Side Comparison</h3>
-                    <p class="text-white-50">Compare your LeetCode profile with friends or top competitive programmers. See
-                        who has solved more hard problems or has a better contest rating.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="background-color: var(--leetcode-medium);">
-                <div class="card-body p-4">
-                    <div class="mb-3 text-success">
-                        <i class="fas fa-trophy fa-3x"></i>
-                    </div>
-                    <h3 class="h4 text-white">Contest Analytics</h3>
-                    <p class="text-white-50">Track your contest performance history. Analyze your rating trajectory, best
-                        ranks, and consistency over time in Weekly and Biweekly contests.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+{% extends "base.html" %}
 
 {% block compact_search_form %}
-<form action="{{ url_for('search_profile') }}" method="POST" class="d-flex align-items-center">
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text">@</span>
-        </div>
-        <input type="text" name="username" value="{{ users.0.username }}" class="form-control"
-            placeholder="Search another profile..." required />
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-search me-1"></i> Search
-        </button>
-    </div>
+<form action="{{ url_for('search_profile') }}" method="POST">
+    <input type="text" name="username" value="{{ users.0.username }}" placeholder="Search username..." required />
+    <button type="submit" class="btn btn-primary" style="height:36px;padding:0 14px;">
+        <i class="fas fa-search"></i>
+    </button>
 </form>
+{% endblock %}
+
+{% block content %}
+{% if not users %}
+<!-- ============ LANDING PAGE ============ -->
+<section class="hero">
+    <h1 class="hero-title">Visualize Your LeetCode Journey</h1>
+    <p class="hero-subtitle">
+        Analyze your problem-solving stats, contest rankings, and compare profiles — all in one beautiful dashboard.
+    </p>
+
+    <form action="{{ url_for('search_profile') }}" method="POST" class="hero-form">
+        <input type="text" name="username" placeholder="Enter LeetCode username" required />
+        <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fas fa-chart-bar"></i> Visualize
+        </button>
+    </form>
+
+    <div class="hero-actions">
+        <a href="{{ url_for('comparison_form') }}" class="btn btn-ghost">
+            <i class="fas fa-code-compare"></i> Compare Profiles
+        </a>
+    </div>
+</section>
+
+<!-- Features -->
+<div class="container">
+    <div class="features-grid">
+        <div class="card feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            <h3>Advanced Charts</h3>
+            <p>Interactive difficulty breakdown, language usage, and topic-wise performance at a glance.</p>
+        </div>
+        <div class="card feature-card">
+            <div class="feature-icon" style="background:rgba(6,182,212,0.1);color:#06b6d4;">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3>Profile Comparison</h3>
+            <p>Compare LeetCode profiles side-by-side. See who leads in hard problems and contest ratings.</p>
+        </div>
+        <div class="card feature-card">
+            <div class="feature-icon" style="background:rgba(16,185,129,0.1);color:#10b981;">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h3>Contest Analytics</h3>
+            <p>Track your contest rating trajectory, best ranks, and consistency across weekly contests.</p>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- ============ PROFILE DASHBOARD ============ -->
+<div class="container dashboard">
+
+    <!-- Profile Header -->
+    {% for user in users %}
+    <div class="profile-header">
+        <div class="profile-header-left">
+            <img src="{{ user.img }}" alt="{{ user.username }}" class="profile-avatar" />
+            <div class="profile-info">
+                <h1 class="profile-name">{{ user.realname or user.username }}</h1>
+                <span class="profile-username">@{{ user.username }}</span>
+                <a href="https://leetcode.com/{{ user.username }}" target="_blank" class="profile-link">
+                    View on LeetCode <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+        </div>
+        {% if badges and badges|length > 0 %}
+        <div class="profile-badges">
+            {% for badge in badges %}
+            <div class="badge-item" title="{{ badge.hover_text }}">
+                <img src="{{ badge.icon_gif if badge.icon_gif else badge.icon }}" alt="{{ badge.name }}" class="badge-icon" loading="lazy">
+                <span class="badge-name">{{ badge.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <!-- Stat Cards -->
+    {% if stat_cards %}
+    <p class="section-title">Overview</p>
+    <div class="grid grid-cols-4 mb">
+        <div class="card stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-value">{{ stat_cards.total_solved }}</span>
+                <span class="stat-label">Total Solved</span>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-value">{{ stat_cards.contest_rating }}</span>
+                <span class="stat-label">Contest Rating</span>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon amber">
+                <i class="fas fa-globe"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-value">{{ stat_cards.global_ranking }}</span>
+                <span class="stat-label">Global Rank</span>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon rose">
+                <i class="fas fa-percentage"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-value">{{ stat_cards.acceptance_rate }}%</span>
+                <span class="stat-label">Acceptance Rate</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Charts Grid -->
+    <p class="section-title">Analytics</p>
+    <div class="grid grid-cols-2 mb">
+        <!-- Problems Difficulty -->
+        <div class="card chart-card">
+            <p class="chart-title">Problem Difficulty Breakdown</p>
+            <div class="chart-wrapper" id="chart-problems">
+                <div class="empty-state"><i class="fas fa-chart-pie"></i><p>No data</p></div>
+            </div>
+        </div>
+
+        <!-- Language Usage -->
+        <div class="card chart-card">
+            <p class="chart-title">Submissions by Language</p>
+            <div class="chart-wrapper" id="chart-languages">
+                <div class="empty-state"><i class="fas fa-code"></i><p>No data</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contest History (Full Width) -->
+    {% if contest_history and contest_history.chart %}
+    <div class="card chart-card mb">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+            <p class="chart-title" style="margin:0">Contest Ranking History</p>
+            <div class="contest-badges">
+                <span class="badge">Attended: {{ contest_history.total }}</span>
+                <span class="badge green">Best: {{ contest_history.best }}</span>
+                <span class="badge red">Worst: {{ contest_history.worst }}</span>
+            </div>
+        </div>
+        <div class="chart-wrapper" id="chart-contest" style="max-height:360px;">
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Skills Charts -->
+    <div class="grid grid-cols-1 mb" id="skills-charts-container">
+        <!-- Rendered by JS -->
+    </div>
+</div>
+
+<!-- Chart Data -->
+<script>
+    window.__CHART_DATA__ = {{ chart_data_json|safe }};
+</script>
+{% endif %}
 {% endblock %}

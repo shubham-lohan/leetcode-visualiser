@@ -11,6 +11,7 @@ class LeetCodeDataService:
         "userProfile": "query userProfile($username: String!) { matchedUser(username: $username) { username profile {ranking userAvatar realName} } }",
         "userContestRankingInfo": "query userContestRankingInfo($username: String!) { userContestRanking(username: $username) { attendedContestsCount rating globalRanking totalParticipants topPercentage badge {name} } userContestRankingHistory(username: $username) { attended problemsSolved ranking rating contest {title startTime} } }",
         "userPublicProfile": "query userPublicProfile($username: String!) { matchedUser(username: $username) { username profile { ranking userAvatar realName aboutMe countryName company jobTitle reputation } } }",
+        "userBadges": "query userBadges($username: String!) { matchedUser(username: $username) { badges { id displayName icon hoverText creationDate medal { slug config { iconGif iconGifBackground } } } } }",
     }
 
     @staticmethod
@@ -53,6 +54,7 @@ class LeetCodeDataService:
             "skillStats",
             "userProfile",
             "userContestRankingInfo",
+            "userBadges",
         ]
 
         all_results = {}
