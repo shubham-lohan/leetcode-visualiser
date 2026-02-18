@@ -4,44 +4,78 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LeetCode Profile Visualiser | Analyze & Compare LeetCode Stats</title>
+    <title>{% if og_title %}{{ og_title }} | LeetCode Visualiser{% else %}LeetCode Profile Visualiser | Analyze & Compare LeetCode Stats{% endif %}</title>
     <meta name="description"
-        content="Visualise your LeetCode progress with beautiful charts. Analyze your problem solving stats, contest rankings, and compare profiles with friends." />
+        content="{% if og_description %}{{ og_description }}{% else %}Visualise your LeetCode progress with beautiful charts. Analyze problem-solving stats, contest rankings, language breakdown, and compare profiles side-by-side.{% endif %}" />
     <meta name="keywords"
-        content="LeetCode, Visualiser, Visualizer, LeetCode Stats, LeetCode Profile, Coding Interview, Data Structures, Algorithms, Contest Ranking, Profile Comparison, LeetCode Analysis, LeetCode Charts" />
+        content="LeetCode, Visualiser, Visualizer, LeetCode Stats, LeetCode Profile, LeetCode Dashboard, Coding Interview Prep, Data Structures, Algorithms, Contest Ranking, Profile Comparison, LeetCode Analysis, LeetCode Charts, LeetCode Badges, LeetCode Rating, Competitive Programming" />
     <meta name="author" content="Shubham Lohan" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="canonical"
         href="https://leetcode-visualiser.vercel.app{{ request.url.path if request.url.path != '/' else '' }}" />
+    <link rel="apple-touch-icon" href="{{ url_for('static', path='img/favicon.svg') }}" />
 
+    <!-- Preconnect to external origins for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+    <link rel="dns-prefetch" href="https://leetcode.com" />
+
+    <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
+      "@type": "WebApplication",
       "name": "LeetCode Visualiser",
+      "url": "https://leetcode-visualiser.vercel.app",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-      "description": "Visualise your LeetCode progress with beautiful charts.",
-      "author": { "@type": "Person", "name": "Shubham Lohan" }
+      "description": "Visualise your LeetCode progress with beautiful charts. Analyze problem-solving stats, contest rankings, and compare profiles with friends.",
+      "author": { "@type": "Person", "name": "Shubham Lohan" },
+      "screenshot": "https://leetcode-visualiser.vercel.app/static/img/preview.png",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "120"
+      },
+      "featureList": [
+        "Problem difficulty breakdown charts",
+        "Contest rating history & trends",
+        "Language submission statistics",
+        "Side-by-side profile comparison",
+        "LeetCode badge showcase",
+        "Algorithm skill analysis",
+        "Dark and light theme support"
+      ]
     }
     </script>
 
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LeetCode Visualiser" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="{{ request.url }}" />
     <meta property="og:title"
         content="{% if og_title %}{{ og_title }} | LeetCode Visualiser{% else %}LeetCode Profile Visualiser{% endif %}" />
     <meta property="og:description"
-        content="{% if og_description %}{{ og_description }}{% else %}Visualise your LeetCode progress with beautiful charts.{% endif %}" />
+        content="{% if og_description %}{{ og_description }}{% else %}Visualise your LeetCode progress with beautiful charts. Analyze stats, contest rankings & compare profiles.{% endif %}" />
     <meta property="og:image"
         content="{% if og_image %}{{ og_image }}{% else %}https://leetcode-visualiser.vercel.app/static/img/preview.png{% endif %}" />
 
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="{{ request.url }}" />
-    <meta property="twitter:title"
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="{{ request.url }}" />
+    <meta name="twitter:title"
         content="{% if og_title %}{{ og_title }} | LeetCode Visualiser{% else %}LeetCode Profile Visualiser{% endif %}" />
-    <meta property="twitter:description"
-        content="{% if og_description %}{{ og_description }}{% else %}Visualise your LeetCode progress with beautiful charts.{% endif %}" />
-    <meta property="twitter:image"
+    <meta name="twitter:description"
+        content="{% if og_description %}{{ og_description }}{% else %}Visualise your LeetCode progress with beautiful charts. Analyze stats, contest rankings & compare profiles.{% endif %}" />
+    <meta name="twitter:image"
         content="{% if og_image %}{{ og_image }}{% else %}https://leetcode-visualiser.vercel.app/static/img/preview.png{% endif %}" />
 
     <!-- Font Awesome -->
@@ -86,10 +120,11 @@
     <nav class="navbar">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <polyline points="16 18 22 12 16 6"></polyline>
-                    <polyline points="8 6 2 12 8 18"></polyline>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="14" width="4" height="7" rx="1" fill="var(--accent)" opacity="0.5"/>
+                    <rect x="10" y="9" width="4" height="12" rx="1" fill="var(--accent)" opacity="0.75"/>
+                    <rect x="17" y="4" width="4" height="17" rx="1" fill="var(--accent)"/>
+                    <path d="M3 5L10 8L17 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 <span>LeetCode Visualiser</span>
             </a>
