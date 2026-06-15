@@ -1,0 +1,16 @@
+{
+  "name": "leetcode-visualiser",
+  "version": "1.0.0",
+  "description": "A FastAPI application for visualizing LeetCode statistics",
+  "private": true,
+  "scripts": {
+    "postinstall": "echo 'Analytics package installed successfully'"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.1.1"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
