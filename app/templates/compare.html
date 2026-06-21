@@ -2,14 +2,14 @@
 
 {% block compact_search_form %}
 <form action="{{ url_for('submit_comparison') }}" method="POST" style="display:flex;gap:8px;align-items:center;">
-    <input type="text" name="username1" value="{{ users.0.username if users else '' }}" placeholder="Username 1"
-        required style="height:36px;padding:0 12px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-xs);color:var(--text-primary);font-size:0.8125rem;font-family:inherit;outline:none;flex:1;" />
-    <span class="compare-vs">vs</span>
+    <input type="text" name="username1" value="{{ users.0.username if users else '' }}" placeholder="Profile 1"
+        required style="height:40px;padding:0 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:20px;color:var(--text-primary);font-size:0.875rem;outline:none;flex:1;" />
+    <span class="compare-vs-badge" style="width:32px;height:32px;font-size:0.7rem;">VS</span>
     <input type="text" name="username2" value="{{ users.1.username if users and users|length > 1 else '' }}"
-        placeholder="Username 2" required
-        style="height:36px;padding:0 12px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-xs);color:var(--text-primary);font-size:0.8125rem;font-family:inherit;outline:none;flex:1;" />
-    <button type="submit" class="btn btn-primary" style="height:36px;padding:0 14px;">
-        <i class="fas fa-sync"></i>
+        placeholder="Profile 2" required
+        style="height:40px;padding:0 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:20px;color:var(--text-primary);font-size:0.875rem;outline:none;flex:1;" />
+    <button type="submit" class="btn btn-accent btn-icon" style="height:40px;width:40px;border-radius:50%;">
+        <i class="fas fa-bolt"></i>
     </button>
 </form>
 {% endblock %}
@@ -17,27 +17,28 @@
 {% block content %}
 {% if not users %}
 <!-- ============ COMPARE LANDING ============ -->
-<section class="hero">
-    <h1 class="hero-title">Compare LeetCode Profiles</h1>
-    <p class="hero-subtitle">
-        Enter two LeetCode usernames to compare problem-solving stats, contest rankings, and skills side-by-side.
+<section class="landing-hero" id="hero-section">
+    <div class="hero-pill" id="hero-pill" style="border-color: var(--chart-rose); color: var(--chart-rose); background: rgba(244,63,94,0.1);">
+        <i class="fas fa-code-compare"></i> Comparison Mode
+    </div>
+    <h1 class="landing-title" id="hero-title">
+        Head-to-Head <br> <span class="gradient-text" style="background: linear-gradient(135deg, var(--chart-rose) 0%, var(--chart-amber) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Comparison</span>
+    </h1>
+    <p class="landing-subtitle" id="hero-subtitle">
+        Enter two LeetCode usernames to compare problem-solving stats, contest ratings, and topic mastery side-by-side.
     </p>
 
-    <form action="{{ url_for('submit_comparison') }}" method="POST" style="width:100%;max-width:560px;">
-        <div class="compare-inputs">
-            <input type="text" name="username1" placeholder="Username 1" required />
-            <span class="compare-vs">vs</span>
-            <input type="text" name="username2" placeholder="Username 2" required />
-        </div>
-        <div class="text-center" style="margin-top:16px;">
-            <button type="submit" class="btn btn-primary btn-lg">
-                <i class="fas fa-chart-line"></i> Compare Profiles
-            </button>
-        </div>
+    <form action="{{ url_for('submit_comparison') }}" method="POST" class="landing-form" id="hero-form" style="max-width: 600px; padding: 12px; border-radius: 40px;">
+        <input type="text" name="username1" placeholder="Profile 1 username" required />
+        <span class="compare-vs-badge">VS</span>
+        <input type="text" name="username2" placeholder="Profile 2 username" required />
+        <button type="submit" class="btn btn-accent btn-lg" style="margin-left: 8px;">
+            Compare <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>
+        </button>
     </form>
 
-    <div class="hero-actions">
-        <a href="{{ url_for('index') }}" class="btn btn-ghost">
+    <div class="landing-actions" id="hero-actions">
+        <a href="{{ url_for('index') }}" class="btn btn-ghost btn-lg">
             <i class="fas fa-arrow-left"></i> Single Profile
         </a>
     </div>
@@ -47,42 +48,52 @@
 <!-- ============ COMPARISON DASHBOARD ============ -->
 <div class="container dashboard">
 
+    <div class="battle-header" id="battle-header">
+        <h1 class="battle-title"><span class="gradient-text">Comparison Mode</span></h1>
+        <p class="text-muted">Analyzing head-to-head metrics...</p>
+    </div>
+
     <!-- Profile Cards Side by Side -->
-    <div class="compare-profiles">
+    <div class="grid grid-cols-2 mb" id="battle-cards">
         {% for user in users %}
-        <div class="card" style="padding:20px;">
-            <div class="profile-header" style="padding:0;">
-                <img src="{{ user.img }}" alt="{{ user.username }}" class="profile-avatar"
-                    style="width:56px;height:56px;" />
-                <div class="profile-info">
-                    <h2 class="profile-name" style="font-size:1.125rem;">{{ user.realname or user.username }}</h2>
-                    <span class="profile-username">@{{ user.username }}</span>
+        {% set is_player_one = loop.index0 == 0 %}
+        {% set accent_color = 'var(--chart-blue)' if is_player_one else 'var(--chart-amber)' %}
+        
+        <div class="card stat-card" style="border-top: 4px solid {{ accent_color }}; position: relative; overflow: visible;">
+            {% if is_player_one %}
+            <div style="position: absolute; top: -12px; left: 24px; background: {{ accent_color }}; color: #000; padding: 2px 12px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase;">Profile 1</div>
+            {% else %}
+            <div style="position: absolute; top: -12px; right: 24px; background: {{ accent_color }}; color: #000; padding: 2px 12px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase;">Profile 2</div>
+            {% endif %}
+
+            <div class="profile-header" style="padding:0; width: 100%; display: flex; align-items: center; justify-content: {{ 'flex-start' if is_player_one else 'flex-end' }}; gap: 16px;">
+                {% if not is_player_one %}
+                <div class="profile-info" style="text-align: right;">
+                    <h2 class="profile-name" style="font-size:1.5rem; background: none; -webkit-text-fill-color: currentColor;">{{ user.realname or user.username }}</h2>
+                    <span class="profile-username" style="color: {{ accent_color }}">@{{ user.username }}</span>
                 </div>
+                {% endif %}
+                
+                <img src="{{ user.img }}" alt="{{ user.username }}" class="profile-avatar" style="width:80px;height:80px; border-color: {{ accent_color }}; box-shadow: 0 0 20px {{ accent_color }}40;" />
+                
+                {% if is_player_one %}
+                <div class="profile-info">
+                    <h2 class="profile-name" style="font-size:1.5rem; background: none; -webkit-text-fill-color: currentColor;">{{ user.realname or user.username }}</h2>
+                    <span class="profile-username" style="color: {{ accent_color }}">@{{ user.username }}</span>
+                </div>
+                {% endif %}
             </div>
 
             {% if stat_cards and stat_cards|length > loop.index0 %}
             {% set sc = stat_cards[loop.index0] %}
-            <div class="grid grid-cols-2" style="gap:8px;margin-top:16px;">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span
-                        style="font-size:1.125rem;font-weight:700;color:var(--text-primary);">{{ sc.total_solved }}</span>
-                    <span style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;">Solved</span>
+            <div class="grid grid-cols-2" style="gap:16px; margin-top:24px; width: 100%; padding-top: 24px; border-top: 1px solid var(--border);">
+                <div style="display:flex; flex-direction: column; align-items: {{ 'flex-start' if is_player_one else 'flex-end' }}; gap:4px;">
+                    <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Problems Solved</span>
+                    <span style="font-size:1.5rem;font-family:Outfit,sans-serif;font-weight:700;color:var(--text-primary);"><span class="counter-animate" data-target="{{ sc.total_solved }}">0</span></span>
                 </div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span
-                        style="font-size:1.125rem;font-weight:700;color:var(--text-primary);">{{ sc.contest_rating }}</span>
-                    <span style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;">Rating</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span
-                        style="font-size:1.125rem;font-weight:700;color:var(--text-primary);">{{ sc.global_ranking }}</span>
-                    <span style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;">Rank</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span
-                        style="font-size:1.125rem;font-weight:700;color:var(--text-primary);">{{ sc.acceptance_rate }}%</span>
-                    <span
-                        style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;">Acceptance</span>
+                <div style="display:flex; flex-direction: column; align-items: {{ 'flex-start' if is_player_one else 'flex-end' }}; gap:4px;">
+                    <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Contest Rating</span>
+                    <span style="font-size:1.5rem;font-family:Outfit,sans-serif;font-weight:700;color:var(--text-primary);"><span class="counter-animate" data-target="{{ sc.contest_rating }}">0</span></span>
                 </div>
             </div>
             {% endif %}
@@ -90,32 +101,35 @@
         {% endfor %}
     </div>
 
-    <!-- Comparison Charts -->
-    <p class="section-title">Comparison Charts</p>
-
-    <div class="grid grid-cols-1 mb">
-        <!-- Problem Comparison -->
+    <!-- Radar Chart (Replaces bar chart if we inject radar logic via JS) -->
+    <!-- Comparison Charts Grid -->
+    <div class="grid grid-cols-1 mb" id="battle-charts">
         <div class="card chart-card">
-            <p class="chart-title">Problem Count Comparison</p>
+            <div class="chart-header">
+                <p class="chart-title"><i class="fas fa-fire" style="color: var(--chart-rose); margin-right: 8px;"></i> Problem Count Breakdown</p>
+            </div>
             <div class="chart-wrapper" id="chart-compare-problems">
                 <div class="empty-state"><p>No data</p></div>
             </div>
         </div>
     </div>
 
-    <!-- Skills Comparison Charts -->
-    <div class="grid grid-cols-1 mb" id="compare-skills-container">
-        <!-- Rendered by JS -->
-    </div>
-
     <!-- Contest Comparison -->
     <div class="grid grid-cols-1 mb">
-        <div class="card chart-card">
-            <p class="chart-title">Contest Rating Comparison</p>
+        <div class="card chart-card" style="position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: radial-gradient(circle, var(--accent-subtle) 0%, transparent 70%);"></div>
+            <div class="chart-header">
+                <p class="chart-title"><i class="fas fa-trophy" style="color: var(--chart-amber); margin-right: 8px;"></i> Rating Progression Race</p>
+            </div>
             <div class="chart-wrapper" id="chart-compare-contest" style="max-height:360px;">
                 <div class="empty-state"><p>No data</p></div>
             </div>
         </div>
+    </div>
+
+    <!-- Skills Comparison Charts -->
+    <div class="grid grid-cols-2 mb" id="compare-skills-container">
+        <!-- Rendered by JS -->
     </div>
 </div>
 
