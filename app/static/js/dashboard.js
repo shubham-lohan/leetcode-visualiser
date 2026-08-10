@@ -446,6 +446,168 @@
         });
       }
     }
+
+    // Activity Heatmap
+    if (data.calendar) {
+      renderHeatmap(data.calendar);
+    }
+  }
+
+  // ==================== Heatmap Renderer ====================
+  function renderHeatmap(calendarJsonStr) {
+    var calendar = {};
+    try {
+      calendar = JSON.parse(calendarJsonStr || '{}');
+    } catch (e) {
+      console.error('Failed to parse calendar data', e);
+    }
+
+    var keys = Object.keys(calendar).map(Number).sort();
+    if (keys.length === 0) return; // No activity data
+
+    var now = new Date();
+    // We want 365 days ago to be the start of our 52 weeks
+    var startDate = new Date(now.getTime() - (365 * 24 * 60 * 60 * 1000));
+    
+    // Normalize to start of day
+    startDate.setHours(0, 0, 0, 0);
+    
+    // Adjust startDate to the nearest Sunday before it, to align weeks properly
+    var dayOfWeek = startDate.getDay();
+    startDate.setDate(startDate.getDate() - dayOfWeek);
+
+    var grid = document.getElementById('heatmap-grid');
+    var monthsContainer = document.getElementById('heatmap-months');
+    if (!grid || !monthsContainer) return;
+    
+    document.getElementById('activity-heatmap-card').style.display = 'block';
+    
+    grid.innerHTML = '';
+    monthsContainer.innerHTML = '';
+    
+    var currentDate = new Date(startDate);
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    
+    // Process data to map: timestamp -> count
+    var dateCounts = {};
+    for (var ts in calendar) {
+      // leetcode timestamp is in seconds, convert to ms
+      var d = new Date(parseInt(ts) * 1000);
+      d.setHours(0,0,0,0);
+      dateCounts[d.getTime()] = calendar[ts];
+    }
+    
+    // Calculate streaks
+    var maxStreak = 0;
+    var currentStreak = 0;
+    var streakActive = false;
+    
+    // Iterate backwards from today to calculate current streak
+    var tempDate = new Date(today);
+    while (true) {
+      var count = dateCounts[tempDate.getTime()] || 0;
+      if (count > 0) {
+        currentStreak++;
+        tempDate.setDate(tempDate.getDate() - 1);
+      } else {
+        // If today has 0, but yesterday had >0, maybe they just haven't coded today yet.
+        // Let's check yesterday.
+        if (tempDate.getTime() === today.getTime()) {
+           tempDate.setDate(tempDate.getDate() - 1);
+           var countYesterday = dateCounts[tempDate.getTime()] || 0;
+           if (countYesterday === 0) break; // truly no streak
+        } else {
+           break;
+        }
+      }
+    }
+    
+    // Calculate max streak (all time in the given 1 yr data)
+    var tempMax = 0;
+    var keysInMs = Object.keys(dateCounts).map(Number).sort((a,b)=>a-b);
+    if (keysInMs.length > 0) {
+        var startTracking = keysInMs[0];
+        var endTracking = today.getTime();
+        var tDate = new Date(startTracking);
+        while(tDate.getTime() <= endTracking) {
+            if (dateCounts[tDate.getTime()] > 0) {
+                tempMax++;
+                if (tempMax > maxStreak) maxStreak = tempMax;
+            } else {
+                tempMax = 0;
+            }
+            tDate.setDate(tDate.getDate() + 1);
+        }
+    }
+
+    // Update UI for streaks
+    var curStreakEl = document.getElementById('current-streak-val');
+    var maxStreakEl = document.getElementById('max-streak-val');
+    if (curStreakEl) curStreakEl.innerText = currentStreak;
+    if (maxStreakEl) maxStreakEl.innerText = maxStreak;
+
+    // Create Tooltip
+    var tooltip = document.createElement('div');
+    tooltip.className = 'heatmap-tooltip';
+    document.body.appendChild(tooltip);
+
+    // Track months to add labels
+    var lastMonth = -1;
+    var currentWeek = 0;
+
+    // We build 52 weeks x 7 days
+    var totalDays = 53 * 7; 
+    
+    for (var i = 0; i < totalDays; i++) {
+      if (currentDate.getTime() > today.getTime()) break;
+      
+      if (currentDate.getDay() === 0) { // Sunday, start of new week
+         currentWeek++;
+         // Check if month changed
+         if (currentDate.getMonth() !== lastMonth && currentWeek < 50) {
+             var monthLabel = document.createElement('span');
+             monthLabel.className = 'heatmap-month-label';
+             monthLabel.innerText = currentDate.toLocaleString('default', { month: 'short' });
+             // We use grid-column-start based on the week index
+             monthLabel.style.gridColumnStart = currentWeek;
+             monthsContainer.appendChild(monthLabel);
+             lastMonth = currentDate.getMonth();
+         }
+      }
+
+      var cell = document.createElement('div');
+      cell.className = 'heatmap-cell';
+      
+      var count = dateCounts[currentDate.getTime()] || 0;
+      
+      if (count === 1) cell.classList.add('lvl-1');
+      else if (count >= 2 && count <= 3) cell.classList.add('lvl-2');
+      else if (count >= 4 && count <= 5) cell.classList.add('lvl-3');
+      else if (count >= 6) cell.classList.add('lvl-4');
+
+      var dateStr = currentDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      var tooltipText = count === 0 ? 'No submissions on ' + dateStr : count + ' submission' + (count > 1 ? 's' : '') + ' on ' + dateStr;
+      
+      cell.setAttribute('data-tooltip', tooltipText);
+      
+      cell.addEventListener('mouseenter', function(e) {
+          tooltip.innerText = this.getAttribute('data-tooltip');
+          tooltip.style.opacity = '1';
+          var rect = this.getBoundingClientRect();
+          tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+          tooltip.style.top = (rect.top - 8) + 'px';
+      });
+      
+      cell.addEventListener('mouseleave', function() {
+          tooltip.style.opacity = '0';
+      });
+
+      grid.appendChild(cell);
+      
+      // increment day
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
   }
 
   // ==================== Compare Charts ====================

@@ -65,6 +65,7 @@ async def profile_detail(request: Request, username: str):
         "languages": language_data,
         "contest": contest_history.get("chart") if contest_history else None,
         "skills": skills_data,
+        "calendar": stat_cards.get("submission_calendar"),
     }
 
     context = {

@@ -3,11 +3,11 @@
 {% block compact_search_form %}
 <form action="{{ url_for('submit_comparison') }}" method="POST" style="display:flex;gap:8px;align-items:center;">
     <input type="text" name="username1" value="{{ users.0.username if users else '' }}" placeholder="Profile 1"
-        required style="height:40px;padding:0 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:20px;color:var(--text-primary);font-size:0.875rem;outline:none;flex:1;" />
+        required style="height:40px;padding:0 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:20px;color:var(--text-primary);font-size:0.875rem;outline:none;flex:1;min-width:0;" />
     <span class="compare-vs-badge" style="width:32px;height:32px;font-size:0.7rem;">VS</span>
     <input type="text" name="username2" value="{{ users.1.username if users and users|length > 1 else '' }}"
         placeholder="Profile 2" required
-        style="height:40px;padding:0 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:20px;color:var(--text-primary);font-size:0.875rem;outline:none;flex:1;" />
+        style="height:40px;padding:0 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:20px;color:var(--text-primary);font-size:0.875rem;outline:none;flex:1;min-width:0;" />
     <button type="submit" class="btn btn-accent btn-icon" style="height:40px;width:40px;border-radius:50%;">
         <i class="fas fa-bolt"></i>
     </button>

@@ -130,6 +130,30 @@
     </div>
     {% endif %}
 
+    <!-- Activity Heatmap -->
+    <div class="card chart-card mb" id="activity-heatmap-card" style="display: none;">
+        <div class="chart-header" style="flex-wrap: wrap; gap: 12px;">
+            <p class="chart-title" style="margin:0">Activity</p>
+            <div class="contest-badges">
+                <span class="badge">Max Streak: <span id="max-streak-val">0</span> days</span>
+                <span class="badge green">Current Streak: <span id="current-streak-val">0</span> days</span>
+            </div>
+        </div>
+        <div class="heatmap-container" style="overflow-x: auto; padding-bottom: 8px;">
+            <div class="heatmap-wrapper">
+                <div class="heatmap-months" id="heatmap-months"></div>
+                <div class="heatmap-body">
+                    <div class="heatmap-days">
+                        <span>Mon</span>
+                        <span>Wed</span>
+                        <span>Fri</span>
+                    </div>
+                    <div class="heatmap-grid" id="heatmap-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Analytics Section -->
     <div class="grid grid-cols-2 mb" id="analytics-grid">
         <!-- Problems Difficulty -->
